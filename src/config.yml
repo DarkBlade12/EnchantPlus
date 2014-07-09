@@ -1,0 +1,178 @@
+#  ______               _                    _    _____   _             
+# |  ____|             | |                  | |  |  __ \ | |            
+# | |__    _ __    ___ | |__    __ _  _ __  | |_ | |__) || | _   _  ___ 
+# |  __|  | '_ \  / __|| '_ \  / _` || '_ \ | __||  ___/ | || | | |/ __|
+# | |____ | | | || (__ | | | || (_| || | | || |_ | |     | || |_| |\__ \
+# |______||_| |_| \___||_| |_| \__,_||_| |_| \__||_|     |_| \__,_||___/
+#
+# Copyright DarkBlade12 - All rights reserved.
+# DarkBlade12 is the developer and respective owner of this plugin.
+
+# This is a list of custom enchantment names that can be used for all EnchantPlus commands or in the config
+# However the plugin will display the official Minecraft name of every enchantment, no matter which name you've entered
+# Original minecraft and bukkit names are already included
+# You have to replace spaces with underlines when entering the name of an enchantment for a command ("Fire Aspect" -> "/plus add Fire_Aspect ...")
+# Format: <new_name>-<original_name/id>
+Enchantment_Names:
+ - Protect-0
+ - Fire Protect-1
+ - Feather-2
+ - Fall Protect-2
+ - Blast Protect-3
+ - Explosion Protection-3
+ - Explosion Protect-3
+ - Projectile Protect-4
+ - Projectile-4
+ - Breathing-5
+ - Water Affinity-6
+ - Sharp-16
+ - Undead-17
+ - Arthropods-18
+ - Fire-20
+ - Loot-21
+ - Efficient-32
+ - Silk-33
+ - Infinite-51
+ 
+# This section contains settings for the natural enchanting (enchantment table)
+Natural_Enchanting:
+
+ # This section contains settings for the level limit of enchantments
+ # Bypass permission: "EnchantPlus.bypass.limit"
+ Level_Limit:
+   
+  # Determines whether the level limit is enabled
+  Enabled: true
+   
+  # This is the default amount of the level limit for all enchantments
+  # Uses the natural level limit of an enchantment if set to 0
+  Amount: 0
+  
+  # You can override the level limit amount for particular enchantments with this list
+  # Format: <name/id>-<amount>
+  Overrides:
+   - knockback-2
+   - sharpness-5
+   - protection-6
+ 
+ # This section contains settings for the multiple enchanting using an enchantment table
+ Multiple_Enchanting:
+ 
+  # Determines whether multiple enchanting of an item is enabled
+  Enabled: true
+  
+  # Determines whether the permission for this feature is enabled
+  # Permission: "EnchantPlus.mechanic.multiple"
+  Permission_Enabled: false
+  
+  # Determines whether the conflicting check for enchantments is enabled (conflicting enchantment example: "Sharpness" and "Smite" or "Bane of Arthropods)
+  # Bypass permission: "EnchantPlus.bypass.conflicting"
+  Conflicting_Enabled: false
+ 
+  # This section contains settings for stacking of enchantment levels
+  # For example you have Sharpness I on your item and you enchant it again and get Sharpness I, it'll add sharpness II instead
+  # The level can not go higher than the limit which can be defined in the "Level_Limit" section
+  Level_Stacking:
+   
+   # Determines whether level stacking is enabled
+   Enabled: true
+   
+   # You can override level stacking for particular enchantments with this list
+   # Format: <name/id>-<true/false>
+   Overrides:
+    - silk-false
+  
+  # This section contains settings for the level cost increase of enchantments
+  Level_Cost_Increase:
+ 
+   # Determines whether the level cost increase is enabled
+   Enabled: true
+  
+   # This is the amount of levels all offered level costs of the enchantment table will be increased by per enchantment
+   # (<normal_cost> + <enchantment_amount> * <amount>)
+   # For example one option in the enchantment table costs 5 levels, but your item has already 2 enchantments and the amount is set to 5, so the cost will be set to 15
+   Amount: 5
+
+# This section contains settings for the manual enchanting with commands
+Manual_Enchanting:
+
+ # Determines whether the commands for manual enchanting are enabled
+ Enabled: true
+ 
+ # Determines whether the conflicting check for enchantments is enabled (conflicting enchantment example: "Sharpness" and "Smite" or "Bane of Arthropods)
+ # Bypass permission: "EnchantPlus.bypass.conflicting"
+ Conflicting_Enabled: false
+ 
+ # Determines whether the inapplicable check for enchantments is enabled (inapplicable enchantment example: "Sharpness" on a pickaxe)
+ # Bypass permission: "EnchantPlus.bypass.inapplicable"
+ Inapplicable_Enabled: false
+ 
+ # Determines whether the item amount check is enabled (items with a higher amount than 1 will trigger this check)
+ # Bypass permission: "EnchantPlus.bypass.amount"
+ Amount_Enabled: true
+ 
+ # This section contains settings for the condition to have a power source (enchantment table) to enchant something with commands
+ # Bypass permission: "EnchantPlus.bypass.power"
+ Power_Source:
+  
+  # Determines whether the power source is enabled
+  Enabled: false
+  
+  # This is the amount of the range in blocks the power source has to be within
+  Range: 5
+  
+ # This section contains settings for the level restriction of the "/ep enchant command"
+ # Bypass permission: "EnchantPlus.bypass.restriction"
+ Level_Restriction:
+  
+  # Determines whether the level restriction is enabled
+  Enabled: true
+  
+  # This is the default amount of the level restriction for all enchantments
+  # Uses the natural level limit of an enchantment if set to 0
+  Amount: 20
+  
+  # You can override the level restriction amount for particular enchantments with this list
+  # Format: <name/id>-<amount>
+  Overrides:
+   - sharpness-7
+   - protect-10
+   - looting-8
+ 
+ # This section contains settings for the level cost of enchanting commands
+ # Bypass permission: "EnchantPlus.bypass.cost"
+ # Formula: "<base> + <regular> * (<level> - 1)"
+ Level_Cost:
+  
+  # Determines whether the level cost is enabled
+  Enabled: false
+  
+  # This is the default base amount for all enchantments
+  Base_Amount: 2
+  
+  # This is the default regular amount for all enchantments
+  Regular_Amount: 11
+  
+  # You can override the amounts for particular enchantments with this list
+  # Format: <name/id>-(-b<base>)(-r<regular>)
+  Overrides: 
+   - silk-b3-r14
+   - feather-r9
+   - thorns-b5
+    
+  # This section contains settings for the level refund when downgrading or removing enchantments
+  Level_Refund:
+  
+   # Determines whether the level refund is enabled (Example: you downgrade an enchantment by 1 level, so you will get the exp levels for 1 level back)
+   Enabled: true
+   
+   # This is the default amount of exp levels for all enchantments the player will get back for downgrading an enchantment per level
+   # Uses the level cost amount if set to 0
+   Amount: 0
+   
+   # You can override the level refund amount for particular enchantments with this list
+   # Format: <name/id>-<amount>
+   Overrides:
+    - fortune-5
+    - respiration-2
+    - looting-4
