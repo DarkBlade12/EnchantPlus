@@ -83,7 +83,11 @@ public final class Settings {
 		enchantments = new LinkedHashMap<String, Enchantment>();
 		for (Enchantment enchantment : Enchantment.values()) {
 			addEnchantment(EnchantmentInformation.getMinecraftName(enchantment), enchantment);
-			addEnchantment(enchantment.getName(), enchantment);
+			String name = enchantment.getName();
+			if(name == null) {
+				continue;
+			}
+			addEnchantment(name, enchantment);
 		}
 		List<String> enchantmentNames = config.getStringList("Enchantment_Names");
 		if (enchantmentNames == null) {

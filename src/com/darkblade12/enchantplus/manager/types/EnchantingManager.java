@@ -120,7 +120,8 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
 			return;
 		}
 		event.setCancelled(true);
-		if (player.getGameMode() != GameMode.CREATIVE) {
+		boolean creative = player.getGameMode() == GameMode.CREATIVE;
+		if (!creative) {
 			player.setLevel(player.getLevel() - event.getExpLevelCost());
 		}
 		List<Enchantment> remaining = getRemainingEnchantments(player, item);
@@ -138,7 +139,18 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
 			}
 		}
 		Enchanter.forItemStack(item).addEnchantments(map);
-		event.getInventory().setItem(0, item);
+		Inventory inventory = event.getInventory();
+		inventory.setItem(0, item);
+		if (!creative) {
+			int amount = event.whichButton() + 1;
+			ItemStack lapis = inventory.getItem(1);
+			int remainingAmount = lapis.getAmount() - amount;
+			if (remainingAmount == 0) {
+				inventory.setItem(1, null);
+			} else {
+				lapis.setAmount(remainingAmount);
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

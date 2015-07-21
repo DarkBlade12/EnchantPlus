@@ -11,6 +11,7 @@ public enum EnchantmentInformation {
 	OXYGEN("Respiration", "Extends underwater breathing time by +15 seconds per level, time between suffocation damage by +1 second per level and underwater vision"),
 	WATER_WORKER("Aqua Affinity", "Increases underwater mining rate", "Breaking blocks underwater is allowed at regular speed, though the player can't be floating to get the full effect"),
 	THORNS("Thorns", "Damages attackers", "(Level x 15)% chance of inflicting 1 - 4 hearts damage on anyone who attacks the wearer", "Success also reduces durability of armor, if present on multiple pieces of armor, only the highest one counts"),
+	DEPTH_STRIDER("Depth Strider", "Increases underwater movement speed", "Every level reduces the amount water slows you by 1/3", "Does not increase vertical speed"),
 	DAMAGE_ALL("Sharpness", "Increases damage", "Each level separately adds 0.5 to 1.5 hearts random extra damage to each hit"),
 	DAMAGE_UNDEAD("Smite", "Increases damage to undead mobs (skeletons, zombies, wither, wither skeletons and zombie pigmen)", "Each level separately adds 0.5 to 2.5 hearts random extra damage to each hit (only to undead mobs)"),
 	DAMAGE_ARTHROPODS("Bane of Arthropods", "Increases damage to arthropod mobs (spider, cave spiders and silverfish)", "Each level separately adds 0.5 to 2.5 hearts random extra damage to each hit (only to arthropod mobs)"),

@@ -27,8 +27,7 @@ public enum EnchantmentTarget {
 			return material == Material.BOW;
 		}
 	},
-	HELMET(Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_FIRE, Enchantment.PROTECTION_EXPLOSIONS, Enchantment.PROTECTION_PROJECTILE, Enchantment.OXYGEN, Enchantment.WATER_WORKER, Enchantment.THORNS,
-			Enchantment.DURABILITY) {
+	HELMET(Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_FIRE, Enchantment.PROTECTION_EXPLOSIONS, Enchantment.PROTECTION_PROJECTILE, Enchantment.OXYGEN, Enchantment.WATER_WORKER, Enchantment.THORNS, Enchantment.DURABILITY) {
 		@Override
 		public boolean includes(Material material) {
 			return material == Material.LEATHER_HELMET || material == Material.GOLD_HELMET || material == Material.CHAINMAIL_HELMET || material == Material.IRON_HELMET || material == Material.DIAMOND_HELMET;
@@ -46,7 +45,7 @@ public enum EnchantmentTarget {
 			return material == Material.LEATHER_LEGGINGS || material == Material.GOLD_LEGGINGS || material == Material.CHAINMAIL_LEGGINGS || material == Material.IRON_LEGGINGS || material == Material.DIAMOND_LEGGINGS;
 		}
 	},
-	BOOTS(Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_FIRE, Enchantment.PROTECTION_EXPLOSIONS, Enchantment.PROTECTION_PROJECTILE, Enchantment.PROTECTION_FALL, Enchantment.THORNS, Enchantment.DURABILITY) {
+	BOOTS(Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_FIRE, Enchantment.PROTECTION_EXPLOSIONS, Enchantment.PROTECTION_PROJECTILE, Enchantment.PROTECTION_FALL, Enchantment.THORNS, Enchantment.DURABILITY, Enchantment.DEPTH_STRIDER) {
 		@Override
 		public boolean includes(Material material) {
 			return material == Material.LEATHER_BOOTS || material == Material.GOLD_BOOTS || material == Material.CHAINMAIL_BOOTS || material == Material.IRON_BOOTS || material == Material.DIAMOND_BOOTS;
@@ -55,15 +54,14 @@ public enum EnchantmentTarget {
 	TOOL(Enchantment.DIG_SPEED, Enchantment.SILK_TOUCH, Enchantment.DURABILITY, Enchantment.LOOT_BONUS_BLOCKS) {
 		@Override
 		public boolean includes(Material material) {
-			return material == Material.WOOD_PICKAXE || material == Material.STONE_PICKAXE || material == Material.GOLD_PICKAXE || material == Material.IRON_PICKAXE || material == Material.DIAMOND_PICKAXE
-					|| material == Material.WOOD_SPADE || material == Material.STONE_SPADE || material == Material.GOLD_SPADE || material == Material.IRON_SPADE || material == Material.DIAMOND_SPADE;
+			return material == Material.WOOD_PICKAXE || material == Material.STONE_PICKAXE || material == Material.GOLD_PICKAXE || material == Material.IRON_PICKAXE || material == Material.DIAMOND_PICKAXE || material == Material.WOOD_SPADE || material == Material.STONE_SPADE
+					|| material == Material.GOLD_SPADE || material == Material.IRON_SPADE || material == Material.DIAMOND_SPADE;
 		}
 	},
 	BREAKABLE(Enchantment.DURABILITY) {
 		@Override
 		public boolean includes(Material material) {
-			return material == Material.WOOD_HOE || material == Material.STONE_HOE || material == Material.GOLD_HOE || material == Material.IRON_HOE || material == Material.DIAMOND_HOE || material == Material.CARROT_STICK
-					|| material == Material.FLINT_AND_STEEL;
+			return material == Material.WOOD_HOE || material == Material.STONE_HOE || material == Material.GOLD_HOE || material == Material.IRON_HOE || material == Material.DIAMOND_HOE || material == Material.CARROT_STICK || material == Material.FLINT_AND_STEEL;
 		}
 	},
 	SHEARS(Enchantment.DIG_SPEED, Enchantment.SILK_TOUCH, Enchantment.DURABILITY) {

@@ -25,7 +25,11 @@ public enum ExclusiveEnchantment {
 	}
 
 	public boolean conflictsWith(Enchantment enchantment) {
-		return conflicting.matcher(enchantment.getName()).matches();
+		String name = enchantment.getName();
+		if(name == null) {
+			return true;
+		}
+		return conflicting.matcher(name).matches();
 	}
 
 	public boolean conflictsWith(Collection<Enchantment> collection) {
