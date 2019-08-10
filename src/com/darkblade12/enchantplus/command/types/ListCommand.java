@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
@@ -22,21 +21,15 @@ public final class ListCommand extends AbstractCommand<EnchantPlus> {
 		handler.displayPluginMessage(sender, "§bAll enchantments:" + getListString(Arrays.asList(Enchantment.values()), plugin.getSettings()));
 	}
 
-	@SuppressWarnings("deprecation")
 	public static String getListString(Collection<Enchantment> collection, Settings settings) throws IllegalArgumentException {
 		if (collection == null || collection.size() == 0) {
 			throw new IllegalArgumentException("Collection cannot be empty");
 		}
 		StringBuilder builder = new StringBuilder();
 		List<Enchantment> enchantments = new ArrayList<Enchantment>(collection);
-		Collections.sort(enchantments, new Comparator<Enchantment>() {
-			@Override
-			public int compare(Enchantment first, Enchantment second) {
-				return Integer.compare(first.getId(), second.getId());
-			}
-		});
+		Collections.sort(enchantments, (a, b) -> a.getKey().getKey().compareTo(b.getKey().getKey()));
 		for (Enchantment enchantment : enchantments) {
-			builder.append("\n§r §3\u25AA §7(§c" + enchantment.getId() + "§7) ");
+			builder.append("\n§r §3\u25AA §7(§c" + enchantment.getKey().getKey() + "§7) ");
 			int amount = 0;
 			for (String name : settings.getNames(enchantment)) {
 				if (amount != 0) {
@@ -61,6 +54,6 @@ public final class ListCommand extends AbstractCommand<EnchantPlus> {
 
 	@Override
 	public String getDescription() {
-		return "Displays a list of all enchantments with their name and id";
+		return "Displays a list of all enchantments with their original and display name";
 	}
 }

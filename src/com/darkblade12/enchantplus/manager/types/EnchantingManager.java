@@ -10,6 +10,7 @@ import java.util.Random;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,6 +18,7 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -24,7 +26,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.darkblade12.enchantplus.EnchantPlus;
 import com.darkblade12.enchantplus.Settings;
 import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
-import com.darkblade12.enchantplus.enchantment.EnchantmentTarget;
 import com.darkblade12.enchantplus.enchantment.enchanter.Enchanter;
 import com.darkblade12.enchantplus.manager.Manager;
 import com.darkblade12.enchantplus.permission.Permission;
@@ -50,15 +51,22 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
 		if (bonus > 15) {
 			bonus = 15;
 		}
-		int amount = RANDOM.nextInt(8) + 1 + (bonus >> 1) + RANDOM.nextInt(bonus + 1);
-		return slot == 0 ? Math.max(amount / 3, 1) : (slot == 1 ? amount * 2 / 3 + 1 : Math.max(amount, bonus * 2));
+		int base = RANDOM.nextInt(8) + 1 + (bonus >> 1) + RANDOM.nextInt(bonus + 1);
+		switch(slot) {
+			case 1:
+				return base * 2 / 3 + 1;
+			case 2:
+				return Math.max(base, bonus * 2);
+			default:
+				return Math.max(base / 3, 1);
+		}
 	}
 
 	private List<Enchantment> getRemainingEnchantments(Player player, ItemStack item) {
 		List<Enchantment> remaining = new ArrayList<Enchantment>();
 		EnchantmentMap map = EnchantmentMap.fromItemStack(item);
 		Settings settings = plugin.getSettings();
-		for (Enchantment enchantment : EnchantmentTarget.fromItemStack(item).getEnchantments()) {
+		for (Enchantment enchantment : EnchantmentMap.getApplicableEnchantments(item)) {
 			if (!map.containsKey(enchantment) || map.get(enchantment) < settings.getLevelLimitAmount(player, enchantment)) {
 				if (settings.isMultipleEnchantingConflictingEnabled() || Permission.CONFLICTING_BYPASS.has(player) || !map.conflictsWith(enchantment)) {
 					remaining.add(enchantment);
@@ -68,37 +76,39 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
 		return remaining;
 	}
 
-	private boolean hasRemainingEnchantments(Player player, ItemStack item) {
-		return getRemainingEnchantments(player, item).size() > 0;
-	}
-
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPrepareItemEnchant(PrepareItemEnchantEvent event) {
 		Player player = event.getEnchanter();
 		Settings settings = plugin.getSettings();
 		ItemStack item = event.getItem();
-		boolean permission = settings.isMultipleEnchantingPermissionEnabled() ? Permission.MULTIPLE_MECHANIC.has(player) : true;
-		if (!settings.isMultipleEnchantingEnabled() || !EnchantmentTarget.isEnchantable(item) || !hasRemainingEnchantments(player, item) || !permission) {
+		boolean permission = !settings.isMultipleEnchantingPermissionEnabled() || Permission.MULTIPLE_MECHANIC.has(player);
+		if (!settings.isMultipleEnchantingEnabled() || !permission || !EnchantmentMap.isEnchantable(item) || !EnchantmentMap.hasEnchantments(item)) {
+			return;
+		}
+		List<Enchantment> remaining = getRemainingEnchantments(player, item);
+		if(remaining.isEmpty()) {
 			return;
 		}
 		event.setCancelled(false);
-		int[] costs = event.getExpLevelCostsOffered();
-		if (item.getType() == Material.ENCHANTED_BOOK) {
-			int bonus = event.getEnchantmentBonus();
-			for (int index = 0; index < costs.length; index++) {
-				costs[index] = getEnchantingLevel(index, bonus);
-			}
+		EnchantmentOffer[] offers = event.getOffers();
+		int bonus = event.getEnchantmentBonus();
+		int offerCount = remaining.size();
+		if(offerCount > 3) {
+			offerCount = 3;
 		}
-		if (!settings.isLevelCostIncreaseEnabled()) {
-			return;
+		int[] costs = new int[offerCount];
+		for(int index = 0; index < offerCount; index++) {
+			costs[index] = getEnchantingLevel(index, bonus);
 		}
 		EnchantmentMap map = EnchantmentMap.fromItemStack(item);
-		if (map.isEmpty()) {
-			return;
+		if (settings.isLevelCostIncreaseEnabled() && !map.isEmpty()) {
+			int costIncrease = map.size() * settings.getLevelCostIncreaseAmount();
+			for (int index = 0; index < offerCount; index++) {
+				costs[index] += costIncrease;
+			}
 		}
-		int amount = map.size() * settings.getLevelCostIncreaseAmount();
-		for (int index = 0; index < costs.length; index++) {
-			costs[index] += amount;
+		for (int index = 0; index < offerCount; index++) {
+			offers[index] = new EnchantmentOffer(remaining.get(index), 1, costs[index]);
 		}
 	}
 
@@ -120,8 +130,7 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
 			return;
 		}
 		event.setCancelled(true);
-		boolean creative = player.getGameMode() == GameMode.CREATIVE;
-		if (!creative) {
+		if (player.getGameMode() != GameMode.CREATIVE) {
 			player.setLevel(player.getLevel() - event.getExpLevelCost());
 		}
 		List<Enchantment> remaining = getRemainingEnchantments(player, item);
@@ -139,18 +148,12 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
 			}
 		}
 		Enchanter.forItemStack(item).addEnchantments(map);
-		Inventory inventory = event.getInventory();
-		inventory.setItem(0, item);
-		if (!creative) {
-			int amount = event.whichButton() + 1;
-			ItemStack lapis = inventory.getItem(1);
-			int remainingAmount = lapis.getAmount() - amount;
-			if (remainingAmount == 0) {
-				inventory.setItem(1, null);
-			} else {
-				lapis.setAmount(remainingAmount);
-			}
+		if(player.getGameMode() != GameMode.CREATIVE) {
+			EnchantingInventory inv = (EnchantingInventory)event.getInventory();
+			ItemStack lapis = inv.getSecondary();
+			lapis.setAmount(lapis.getAmount() - (event.whichButton() + 1));
 		}
+		event.getInventory().setItem(0, item);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

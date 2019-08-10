@@ -38,7 +38,6 @@ public final class Settings {
 	private static final Pattern LEVEL_COST_BASE = Pattern.compile("[bB]\\d+");
 	private static final Pattern LEVEL_COST_REGULAR = Pattern.compile("[rR]\\d+");
 	private static final Pattern LEVEL_REFUND_OVERRIDE = Pattern.compile("([a-zA-Z_\\s]+|\\d+)-\\d+");
-	private static final Pattern NUMBER = Pattern.compile("\\d+");
 	private final AbstractPlugin plugin;
 	private Map<String, Enchantment> enchantments;
 	private boolean levelLimitEnabled;
@@ -79,15 +78,13 @@ public final class Settings {
 		loadManualEnchanting(config);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void loadEnchantmentNames(Configuration config) throws InvalidValueException {
 		enchantments = new LinkedHashMap<String, Enchantment>();
 		for (Enchantment enchantment : Enchantment.values()) {
 			addEnchantment(EnchantmentInformation.getMinecraftName(enchantment), enchantment);
-			String name = enchantment.getName();
-			if(name == null) {
-				continue;
-			}
-			addEnchantment(name, enchantment);
+			addEnchantment(enchantment.getName(), enchantment);
+			addEnchantment(enchantment.getKey().getKey(), enchantment);
 		}
 		List<String> enchantmentNames = config.getStringList("Enchantment_Names");
 		if (enchantmentNames == null) {
@@ -417,20 +414,10 @@ public final class Settings {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	public Enchantment getEnchantment(String identifier) throws IllegalArgumentException {
-		identifier = identifier.replace('_', ' ');
-		if (NUMBER.matcher(identifier).matches()) {
-			int id;
-			try {
-				id = Integer.parseInt(identifier);
-			} catch (Exception exception) {
-				return null;
-			}
-			return Enchantment.getById(id);
-		}
+	public Enchantment getEnchantment(String name) throws IllegalArgumentException {
+		name = name.replace('_', ' ');
 		for (Entry<String, Enchantment> entry : enchantments.entrySet()) {
-			if (entry.getKey().equalsIgnoreCase(identifier)) {
+			if (entry.getKey().equalsIgnoreCase(name)) {
 				return entry.getValue();
 			}
 		}

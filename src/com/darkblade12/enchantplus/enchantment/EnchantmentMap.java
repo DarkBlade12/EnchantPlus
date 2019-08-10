@@ -40,6 +40,25 @@ public final class EnchantmentMap extends HashMap<Enchantment, Integer> {
 	public static boolean hasEnchantment(ItemStack item, Enchantment enchantment) {
 		return fromItemStack(item).containsKey(enchantment);
 	}
+	
+	public static boolean isEnchantmentApplicable(ItemStack item, Enchantment enchant) {
+		Material mat = item.getType();
+		return mat == Material.BOOK  || mat == Material.ENCHANTED_BOOK || enchant.canEnchantItem(item);
+	}
+	
+	public static List<Enchantment> getApplicableEnchantments(ItemStack item) {
+		List<Enchantment> applicable = new ArrayList<Enchantment>();
+		for(Enchantment enchant : Enchantment.values()) {
+			if(!enchant.isTreasure() && isEnchantmentApplicable(item, enchant)) {
+				applicable.add(enchant);
+			}
+		}
+		return applicable;
+	}
+	
+	public static boolean isEnchantable(ItemStack item) {
+		return !getApplicableEnchantments(item).isEmpty();
+	}
 
 	public Integer put(Enchantment key, Integer value, Player player, Settings settings) {
 		if (settings != null) {
@@ -65,8 +84,12 @@ public final class EnchantmentMap extends HashMap<Enchantment, Integer> {
 	}
 
 	public boolean conflictsWith(Enchantment enchantment) {
-		ExclusiveEnchantment exclusive = ExclusiveEnchantment.fromEnchantment(enchantment);
-		return exclusive == null ? false : exclusive.conflictsWith(keySet());
+		for(Enchantment itemEnchant : keySet()) {
+			if(itemEnchant != enchantment && enchantment.conflictsWith(itemEnchant)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean hasEnchantment(Enchantment enchantment, int level) {
@@ -74,7 +97,12 @@ public final class EnchantmentMap extends HashMap<Enchantment, Integer> {
 	}
 
 	public List<Enchantment> getConflicting(Enchantment enchantment) {
-		ExclusiveEnchantment exclusive = ExclusiveEnchantment.fromEnchantment(enchantment);
-		return exclusive == null ? new ArrayList<Enchantment>() : exclusive.getConflicting(keySet());
+		List<Enchantment> conflicting = new ArrayList<Enchantment>();
+		for(Enchantment itemEnchant : keySet()) {
+			if(itemEnchant.conflictsWith(enchantment)) {
+				conflicting.add(itemEnchant);
+			}
+		}
+		return conflicting;
 	}
 }

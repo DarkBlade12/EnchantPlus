@@ -12,27 +12,27 @@
 # However the plugin will display the official Minecraft name of every enchantment, no matter which name you've entered
 # Original minecraft and bukkit names are already included
 # You have to replace spaces with underlines when entering the name of an enchantment for a command ("Fire Aspect" -> "/plus add Fire_Aspect ...")
-# Format: <new_name>-<original_name/id>
+# Format: <new_name>-<original_name>
 Enchantment_Names:
- - Protect-0
- - Fire Protect-1
- - Feather-2
- - Fall Protect-2
- - Blast Protect-3
- - Explosion Protection-3
- - Explosion Protect-3
- - Projectile Protect-4
- - Projectile-4
- - Breathing-5
- - Water Affinity-6
- - Sharp-16
- - Undead-17
- - Arthropods-18
- - Fire-20
- - Loot-21
- - Efficient-32
- - Silk-33
- - Infinite-51
+ - Protect-protection
+ - Fire Protect-fire_protection
+ - Feather-feather_falling
+ - Fall Protect-feather_falling
+ - Blast Protect-blast_protection
+ - Explosion Protection-blast_protection
+ - Explosion Protect-blast_protection
+ - Projectile Protect-projectile_protection
+ - Projectile-projectile_protection
+ - Breathing-respiration
+ - Water Affinity-aqua_affinity
+ - Sharp-sharpness
+ - Undead-smite
+ - Arthropods-bane_of_arthropods
+ - Fire-fire_aspect
+ - Loot-looting
+ - Efficient-efficiency
+ - Silk-silk_touch
+ - Infinite-infinity
  
 # This section contains settings for the natural enchanting (enchantment table)
 Natural_Enchanting:
@@ -49,7 +49,7 @@ Natural_Enchanting:
   Amount: 0
   
   # You can override the level limit amount for particular enchantments with this list
-  # Format: <name/id>-<amount>
+  # Format: <name>-<amount>
   Overrides:
    - knockback-2
    - sharpness-5
@@ -78,7 +78,7 @@ Natural_Enchanting:
    Enabled: true
    
    # You can override level stacking for particular enchantments with this list
-   # Format: <name/id>-<true/false>
+   # Format: <name>-<true/false>
    Overrides:
     - silk-false
   
@@ -133,7 +133,7 @@ Manual_Enchanting:
   Amount: 20
   
   # You can override the level restriction amount for particular enchantments with this list
-  # Format: <name/id>-<amount>
+  # Format: <name>-<amount>
   Overrides:
    - sharpness-7
    - protect-10
@@ -154,7 +154,7 @@ Manual_Enchanting:
   Regular_Amount: 11
   
   # You can override the amounts for particular enchantments with this list
-  # Format: <name/id>-(-b<base>)(-r<regular>)
+  # Format: <name>-(-b<base>)(-r<regular>)
   Overrides: 
    - silk-b3-r14
    - feather-r9
@@ -171,7 +171,7 @@ Manual_Enchanting:
    Amount: 0
    
    # You can override the level refund amount for particular enchantments with this list
-   # Format: <name/id>-<amount>
+   # Format: <name>-<amount>
    Overrides:
     - fortune-5
     - respiration-2

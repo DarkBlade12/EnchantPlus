@@ -11,7 +11,9 @@ public enum EnchantmentInformation {
 	OXYGEN("Respiration", "Extends underwater breathing time by +15 seconds per level, time between suffocation damage by +1 second per level and underwater vision"),
 	WATER_WORKER("Aqua Affinity", "Increases underwater mining rate", "Breaking blocks underwater is allowed at regular speed, though the player can't be floating to get the full effect"),
 	THORNS("Thorns", "Damages attackers", "(Level x 15)% chance of inflicting 1 - 4 hearts damage on anyone who attacks the wearer", "Success also reduces durability of armor, if present on multiple pieces of armor, only the highest one counts"),
-	DEPTH_STRIDER("Depth Strider", "Increases underwater movement speed", "Every level reduces the amount water slows you by 1/3", "Does not increase vertical speed"),
+	DEPTH_STRIDER("Depth Strider", "Increases underwater movement speed"),
+	BINDING_CURSE("Curse of Binding", "Prevents removal of items (except for in creative)"),
+	FROST_WALKER("Frost Walker", "Turns water beneath the player into frosted ice"),
 	DAMAGE_ALL("Sharpness", "Increases damage", "Each level separately adds 0.5 to 1.5 hearts random extra damage to each hit"),
 	DAMAGE_UNDEAD("Smite", "Increases damage to undead mobs (skeletons, zombies, wither, wither skeletons and zombie pigmen)", "Each level separately adds 0.5 to 2.5 hearts random extra damage to each hit (only to undead mobs)"),
 	DAMAGE_ARTHROPODS("Bane of Arthropods", "Increases damage to arthropod mobs (spider, cave spiders and silverfish)", "Each level separately adds 0.5 to 2.5 hearts random extra damage to each hit (only to arthropod mobs)"),
@@ -19,6 +21,7 @@ public enum EnchantmentInformation {
 	FIRE_ASPECT("Fire Aspect", "Sets the target on fire", "Level I adds 3 burn ticks and each additional level adds 4 more burn ticks", "Dropped meat will be cooked if killed by fire"),
 	LOOT_BONUS_MOBS("Looting", "Mobs can drop more loot", "Increases maximum loot drop by +1 per level and chance of rare drops by +0.5% per level (i.e., 3% at level I, 3.5% at level II, and 4% at level III)",
 			"This also applies to kills by Thorns-enchanted armor while holding the sword and to shots with bows if you switch to the enchanted sword before the arrow kills the target"),
+	SWEEPING_EDGE("Sweeping Edge", "Increases sweeping attack damage"),
 	DIG_SPEED("Efficiency", "Increases mining speed +30% over the previous level: I = 130%, II = 169%, III = 220%, IV = 286%, V = 371%", "The speed increase applies to all blocks that when mined, will drop an item"),
 	SILK_TOUCH("Silk Touch", "Mined blocks drop themselves instead of the usual items", "Allows collection of blocks that are normally unobtainable"),
 	DURABILITY("Unbreaking", "Increases durability", "For most items, (100 / (Level + 1))% chance a use reduces durability", "On average, lifetime is (Level + 1) times as long", "For armor, ((60 + 40/(Level + 1))% chance a use reduces durability"),
@@ -32,7 +35,16 @@ public enum EnchantmentInformation {
 	ARROW_FIRE("Flame", "Arrows are on fire when shot", "Unlike flint and steel, flaming arrows only affect players, mobs, and TNT", "No other blocks catch fire and they do not produce light", "Fire damage applies after initial damage, similar to Fire Aspect"),
 	ARROW_INFINITE("Infinity", "Shooting consumes no arrows", "Firing requires at least one arrow in inventory, but doesn't consume it", "Fired arrows can't be retrieved, except in creative mode"),
 	LUCK("Luck of the Sea", "Lowers chance of junk catches by 2.5% per level and increases chance of treasure catches by 1% per level"),
-	LURE("Lure", "Increases rate of fish biting your hook", "Decreases time before fish bite your hook by 5 seconds per level and chances of both junk and treasure catches by 1% per level");
+	LURE("Lure", "Increases rate of fish biting your hook", "Decreases time before fish bite your hook by 5 seconds per level and chances of both junk and treasure catches by 1% per level"),
+	LOYALTY("Loyalty", "Trident returns after being thrown."),
+	IMPALING("Impaling", "Trident deals additional damage to mobs that spawn naturally in the ocean, as well as players"),
+	RIPTIDE("Riptide", "Trident launches player with itself when thrown", "Only functions in water or rain"),
+	CHANNELING("Channeling", "Trident \"channels\" a bolt of lightning towards a hit entity", "Only functions during thunderstorms and if target unobstructed with opaque blocks"),
+	MULTISHOT("Multishot", "Shoot 3 arrows at the cost of one"),
+	QUICK_CHARGE("Quick Charge", "Decreases crossbow reloading time"),
+	PIERCING("Piercing", "Arrows pass through multiple entities"),
+	MENDING("Mending", "Repair items with experience"),
+	VANISHING_CURSE("Curse of Vanishing", "Item destroyed on death");
 
 	private final String minecraftName;
 	private final String[] description;
@@ -50,6 +62,7 @@ public enum EnchantmentInformation {
 		return description;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static EnchantmentInformation fromEnchantment(Enchantment enchantment) {
 		try {
 			return valueOf(enchantment.getName());

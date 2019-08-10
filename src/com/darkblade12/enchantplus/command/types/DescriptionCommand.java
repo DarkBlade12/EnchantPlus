@@ -35,7 +35,7 @@ public final class DescriptionCommand extends AbstractCommand<EnchantPlus> {
 
 	@Override
 	public String[] getParameters() {
-		return new String[] { "<name/id>" };
+		return new String[] { "<name>" };
 	}
 
 	@Override

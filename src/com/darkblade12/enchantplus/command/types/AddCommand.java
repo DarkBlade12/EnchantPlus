@@ -17,7 +17,6 @@ import com.darkblade12.enchantplus.command.CommandHandler;
 import com.darkblade12.enchantplus.enchantment.EnchantmentCalculator;
 import com.darkblade12.enchantplus.enchantment.EnchantmentInformation;
 import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
-import com.darkblade12.enchantplus.enchantment.EnchantmentTarget;
 import com.darkblade12.enchantplus.enchantment.enchanter.Enchanter;
 import com.darkblade12.enchantplus.permission.Permission;
 
@@ -32,7 +31,7 @@ public final class AddCommand extends AbstractCommand<EnchantPlus> {
 			handler.displayPluginMessage(sender, "§cEnchanting commands are currently disabled!");
 			return;
 		}
-		ItemStack item = player.getItemInHand();
+		ItemStack item = player.getInventory().getItemInMainHand();
 		if (item.getType() == Material.AIR) {
 			handler.displayPluginMessage(sender, "§cYou have to hold an item in your hand!");
 			return;
@@ -46,7 +45,7 @@ public final class AddCommand extends AbstractCommand<EnchantPlus> {
 			handler.displayPluginMessage(sender, "§cAn enchantment with this identifier doesn't exist!");
 			return;
 		}
-		if (settings.isManualEnchantingInapplicableEnabled() && !EnchantmentTarget.fromItemStack(item).includes(enchantment) && !Permission.INAPPLICABLE_BYPASS.has(sender)) {
+		if (settings.isManualEnchantingInapplicableEnabled() && !enchantment.canEnchantItem(item) && !Permission.INAPPLICABLE_BYPASS.has(sender)) {
 			handler.displayPluginMessage(sender, "§cThis enchantment is inapplicable for the item in your hand!");
 			return;
 		}
@@ -116,7 +115,7 @@ public final class AddCommand extends AbstractCommand<EnchantPlus> {
 				xPow = Math.pow(x, 2);
 				for (int y = -range; y <= range; y++) {
 					if ((xPow + Math.pow(y, 2) + zPow) <= bPow) {
-						if (world.getBlockAt((int) (currentX + x), (int) (currentY + y), (int) (currentZ + z)).getType() == Material.ENCHANTMENT_TABLE) {
+						if (world.getBlockAt((int) (currentX + x), (int) (currentY + y), (int) (currentZ + z)).getType() == Material.ENCHANTING_TABLE) {
 							return true;
 						}
 					}
@@ -133,7 +132,7 @@ public final class AddCommand extends AbstractCommand<EnchantPlus> {
 
 	@Override
 	public String[] getParameters() {
-		return new String[] { "<name/id>", "<level/natural>" };
+		return new String[] { "<name>", "<level/natural>" };
 	}
 
 	@Override

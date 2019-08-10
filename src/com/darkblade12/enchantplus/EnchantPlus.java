@@ -52,11 +52,10 @@ public final class EnchantPlus extends AbstractPlugin {
 		}
 		try {
 			MetricsLite metrics = new MetricsLite(this);
-			if (metrics.isOptOut()) {
-				logger.warning("Metrics are disabled!");
+			if (!metrics.isEnabled()) {
+				logger.warning("Metrics is disabled!");
 			} else {
-				logger.info("This plugin is using Metrics by Hidendra!");
-				metrics.start();
+				logger.info("This plugin is using Metrics by BtoBastian!");
 			}
 		} catch (Exception exception) {
 			logger.info("An error occurred while enabling Metrics!");

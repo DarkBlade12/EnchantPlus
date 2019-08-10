@@ -13,29 +13,27 @@ import com.darkblade12.enchantplus.EnchantPlus;
 import com.darkblade12.enchantplus.command.AbstractCommand;
 import com.darkblade12.enchantplus.command.CommandHandler;
 import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
-import com.darkblade12.enchantplus.enchantment.EnchantmentTarget;
 import com.darkblade12.enchantplus.permission.Permission;
 
 public final class ApplicableCommand extends AbstractCommand<EnchantPlus> {
 	@Override
 	public void execute(EnchantPlus plugin, CommandHandler<EnchantPlus> handler, CommandSender sender, String label, String[] parameters) {
 		Player player = (Player) sender;
-		ItemStack item = player.getItemInHand();
+		ItemStack item = player.getInventory().getItemInMainHand();
 		if (item.getType() == Material.AIR) {
 			handler.displayPluginMessage(sender, "§cYou have to hold an item in your hand!");
 			return;
 		}
-		EnchantmentTarget target = EnchantmentTarget.fromItemStack(item);
-		if (target == EnchantmentTarget.NONE) {
-			handler.displayPluginMessage(sender, "§cThis item doesn't have any applicable enchantments!");
-			return;
-		}
 		EnchantmentMap map = EnchantmentMap.fromItemStack(item);
 		List<Enchantment> applicable = new ArrayList<Enchantment>();
-		for (Enchantment enchantment : target.getEnchantments()) {
+		for (Enchantment enchantment : EnchantmentMap.getApplicableEnchantments(item)) {
 			if (!map.conflictsWith(enchantment)) {
 				applicable.add(enchantment);
 			}
+		}
+		if (applicable.isEmpty()) {
+			handler.displayPluginMessage(sender, "§cThis item doesn't have any applicable enchantments!");
+			return;
 		}
 		handler.displayPluginMessage(sender, "§aApplicable enchantments:" + ListCommand.getListString(applicable, plugin.getSettings()));
 	}

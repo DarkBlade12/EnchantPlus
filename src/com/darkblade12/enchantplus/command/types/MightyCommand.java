@@ -1,6 +1,7 @@
 package com.darkblade12.enchantplus.command.types;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.bukkit.Material;
@@ -12,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import com.darkblade12.enchantplus.EnchantPlus;
 import com.darkblade12.enchantplus.command.AbstractCommand;
 import com.darkblade12.enchantplus.command.CommandHandler;
-import com.darkblade12.enchantplus.enchantment.EnchantmentTarget;
+import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
 import com.darkblade12.enchantplus.enchantment.enchanter.Enchanter;
 import com.darkblade12.enchantplus.permission.Permission;
 
@@ -27,7 +28,7 @@ public final class MightyCommand extends AbstractCommand<EnchantPlus> {
 			handler.displayPluginMessage(sender, "§cEnchanting commands are currently disabled!");
 			return;
 		}
-		ItemStack item = player.getItemInHand();
+		ItemStack item = player.getInventory().getItemInMainHand();
 		if (item.getType() == Material.AIR) {
 			handler.displayPluginMessage(sender, "§cYou have to hold an item in your hand!");
 			return;
@@ -41,15 +42,26 @@ public final class MightyCommand extends AbstractCommand<EnchantPlus> {
 				return;
 			}
 			applicable = Boolean.parseBoolean(value);
-			if (applicable && EnchantmentTarget.fromItemStack(item) == EnchantmentTarget.NONE) {
+			if (applicable && !EnchantmentMap.isEnchantable(item)) {
 				handler.displayPluginMessage(sender, "§cThe item in your hand doesn't have any applicable enchantments!");
 				return;
 			}
 		}
 		Enchanter enchanter = Enchanter.forItemStack(item);
+		List<Enchantment> enchants;
+		if(applicable) {
+			enchants = EnchantmentMap.getApplicableEnchantments(item);
+		} else {
+			enchants = new ArrayList<Enchantment>();
+			for(Enchantment enchant : Enchantment.values()) {
+				if(!enchant.isTreasure()) {
+					enchants.add(enchant);
+				}
+			}
+		}
 		if (parameter.equalsIgnoreCase("natural")) {
 			enchanter.removeAllEnchantments();
-			enchanter.addAllEnchantments(applicable ? EnchantmentTarget.fromItemStack(item).getEnchantments() : Arrays.asList(Enchantment.values()));
+			enchanter.addAllEnchantments(enchants);
 			handler.displayPluginMessage(sender, "§aThe item in your hand is now mighty and has all" + (applicable ? " applicable" : "") + " enchantments at their natural level limit.");
 			return;
 		}
@@ -61,7 +73,7 @@ public final class MightyCommand extends AbstractCommand<EnchantPlus> {
 		try {
 			level = Short.parseShort(parameter);
 		} catch (Exception exception) {
-			handler.displayPluginMessage(sender, "§cThe level can't be higher than §632767§c!");
+			handler.displayPluginMessage(sender, "§cThe level can't be higher than §6" + Short.MAX_VALUE + "§c!");
 			return;
 		}
 		if (level < 1) {
@@ -69,7 +81,7 @@ public final class MightyCommand extends AbstractCommand<EnchantPlus> {
 			return;
 		}
 		enchanter.removeAllEnchantments();
-		enchanter.addAllEnchantments(applicable ? EnchantmentTarget.fromItemStack(item).getEnchantments() : Arrays.asList(Enchantment.values()), level);
+		enchanter.addAllEnchantments(enchants, level);
 		handler.displayPluginMessage(sender, "§aThe item in your hand is now mighty and has all" + (applicable ? " applicable" : "") + " enchantments at level §6" + level + "§a.");
 	}
 

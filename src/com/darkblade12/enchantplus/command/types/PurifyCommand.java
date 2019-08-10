@@ -24,7 +24,7 @@ public final class PurifyCommand extends AbstractCommand<EnchantPlus> {
 			handler.displayPluginMessage(sender, "§cEnchanting commands are currently disabled!");
 			return;
 		}
-		ItemStack item = player.getItemInHand();
+		ItemStack item = player.getInventory().getItemInMainHand();
 		if (item.getType() == Material.AIR) {
 			handler.displayPluginMessage(sender, "§cYou have to hold an item in your hand!");
 			return;

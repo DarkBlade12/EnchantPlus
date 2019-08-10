@@ -1,7 +1,8 @@
 name: EnchantPlus
-version: 1.3.3
+version: 1.3.4
 author: DarkBlade12
 website: http://dev.bukkit.org/profiles/DarkBladee12
+api-version: 1.13
 
 main: com.darkblade12.enchantplus.EnchantPlus
 
