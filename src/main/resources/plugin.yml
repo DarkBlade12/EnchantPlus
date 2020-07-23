@@ -1,0 +1,13 @@
+name: EnchantPlus
+version: ${project.version}
+author: DarkBlade12
+website: http://dev.bukkit.org/profiles/DarkBladee12
+api-version: 1.13
+
+main: com.darkblade12.enchantplus.EnchantPlus
+
+commands:
+  plus:
+    description: General EnchantPlus command
+    usage: /plus
+    aliases: [ep, eplus, enchantplus]
