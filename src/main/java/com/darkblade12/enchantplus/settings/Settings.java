@@ -490,7 +490,7 @@ public final class Settings extends SettingsBase<EnchantPlus> {
 
     public int getCost(Player player, ItemStack item, Enchantment enchant, int level) throws IllegalArgumentException {
         EnchantmentMap map = EnchantmentMap.fromItemStack(item);
-        int currentLevel = map.getLevel(enchant, 0);
+        int currentLevel = map.getLevel(enchant);
         if (currentLevel == level) {
             throw new IllegalArgumentException("Current level equals the new level.");
         }

@@ -78,11 +78,7 @@ public final class EnchantmentMap implements Iterable<Map.Entry<Enchantment, Int
     }
 
     public int getLevel(Enchantment enchant) {
-        return enchantments.get(enchant);
-    }
-
-    public int getLevel(Enchantment enchant, int defaultValue) {
-        return enchantments.getOrDefault(enchant, defaultValue);
+        return enchantments.getOrDefault(enchant, 0);
     }
 
     public Set<Enchantment> getEnchantments() {

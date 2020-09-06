@@ -2,9 +2,9 @@ package com.darkblade12.enchantplus.enchantment;
 
 import com.darkblade12.enchantplus.EnchantPlus;
 import com.darkblade12.enchantplus.Permission;
-import com.darkblade12.enchantplus.settings.Settings;
 import com.darkblade12.enchantplus.enchantment.enchanter.Enchanter;
 import com.darkblade12.enchantplus.plugin.Manager;
+import com.darkblade12.enchantplus.settings.Settings;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -43,7 +43,6 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
     protected void onDisable() {
     }
 
-
     private int getEnchantingLevel(int slot, int bonus) {
         if (bonus > 15) {
             bonus = 15;
@@ -65,17 +64,17 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
         EnchantmentMap map = EnchantmentMap.fromItemStack(item);
         Settings settings = plugin.getSettings();
 
-        for (Enchantment enchantment : EnchantmentMap.getApplicableEnchantments(item)) {
-            if (map.contains(enchantment) && map.getLevel(enchantment) >= settings.getLevelLimitAmount(player, enchantment)) {
+        for (Enchantment enchant : EnchantmentMap.getApplicableEnchantments(item)) {
+            if (map.getLevel(enchant) >= settings.getLevelLimitAmount(player, enchant)) {
                 continue;
             }
 
             if (!settings.isMultipleEnchantingConflictingEnabled() && !Permission.BYPASS_CONFLICTING.test(player) && map
-                    .isConflicting(enchantment)) {
+                    .isConflicting(enchant)) {
                 continue;
             }
 
-            remaining.add(enchantment);
+            remaining.add(enchant);
         }
 
         return remaining;
