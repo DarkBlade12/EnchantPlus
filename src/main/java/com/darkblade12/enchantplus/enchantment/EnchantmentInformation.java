@@ -1,9 +1,14 @@
 package com.darkblade12.enchantplus.enchantment;
 
+import org.apache.commons.lang.NullArgumentException;
+import org.bukkit.Keyed;
 import org.bukkit.enchantments.Enchantment;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public enum EnchantmentInformation {
     PROTECTION_ENVIRONMENTAL("Protection", "Reduces most damage", "Exceptions: doesn't reduce damage from the void and the /kill command"),
@@ -83,6 +88,19 @@ public enum EnchantmentInformation {
         for (EnchantmentInformation info : values()) {
             BY_NAME.put(info.name(), info);
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    public static String getName(Enchantment enchant) {
+        if (enchant == null) {
+            throw new NullArgumentException("enchant");
+        }
+
+        return enchant instanceof Keyed ? enchant.getKey().getKey() : enchant.getName();
+    }
+
+    public static List<String> getNames() {
+        return Arrays.stream(Enchantment.values()).map(EnchantmentInformation::getName).collect(Collectors.toList());
     }
 
     public String getMinecraftName() {

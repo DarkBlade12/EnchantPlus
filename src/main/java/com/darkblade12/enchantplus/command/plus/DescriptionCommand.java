@@ -7,9 +7,7 @@ import com.darkblade12.enchantplus.plugin.command.CommandBase;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class DescriptionCommand extends CommandBase<EnchantPlus> {
     public DescriptionCommand() {
@@ -36,6 +34,6 @@ public final class DescriptionCommand extends CommandBase<EnchantPlus> {
 
     @Override
     public List<String> getSuggestions(EnchantPlus plugin, CommandSender sender, String[] args) {
-        return args.length == 1 ? Arrays.stream(Enchantment.values()).map(e -> e.getKey().getKey()).collect(Collectors.toList()) : null;
+        return args.length == 1 ? EnchantmentInformation.getNames() : null;
     }
 }

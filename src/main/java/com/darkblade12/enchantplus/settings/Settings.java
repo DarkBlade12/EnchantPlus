@@ -7,7 +7,6 @@ import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
 import com.darkblade12.enchantplus.plugin.settings.InvalidValueException;
 import com.darkblade12.enchantplus.plugin.settings.SettingsBase;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -96,13 +95,11 @@ public final class Settings extends SettingsBase<EnchantPlus> {
         load();
     }
 
-    @SuppressWarnings("deprecation")
     private void loadEnchantmentNames(Configuration config) throws InvalidValueException {
         enchantments = new LinkedHashMap<>();
         for (Enchantment enchant : Enchantment.values()) {
             addEnchantment(EnchantmentInformation.getMinecraftName(enchant), enchant);
-            addEnchantment(enchant.getName(), enchant);
-            addEnchantment(enchant.getKey().getKey(), enchant);
+            addEnchantment(EnchantmentInformation.getName(enchant), enchant);
         }
 
         List<String> enchantmentNames = config.getStringList(Setting.ENCHANTMENT_NAMES.getPath());
@@ -571,11 +568,11 @@ public final class Settings extends SettingsBase<EnchantPlus> {
 
         StringBuilder builder = new StringBuilder();
         List<Enchantment> clone = new ArrayList<>(enchantments);
-        clone.sort(Comparator.comparing(a -> a.getKey().getKey()));
+        clone.sort(Comparator.comparing(EnchantmentInformation::getName));
 
         for (Enchantment enchant : clone) {
             String altNames = getNames(enchant).stream().map(n -> "§6" + n).collect(Collectors.joining(" §e| "));
-            builder.append('\n').append(plugin.formatMessage(messageKey, enchant.getKey().getKey(), altNames));
+            builder.append('\n').append(plugin.formatMessage(messageKey, EnchantmentInformation.getName(enchant), altNames));
         }
 
         return builder.toString();

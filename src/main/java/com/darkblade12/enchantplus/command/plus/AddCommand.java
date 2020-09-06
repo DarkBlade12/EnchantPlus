@@ -2,11 +2,11 @@ package com.darkblade12.enchantplus.command.plus;
 
 import com.darkblade12.enchantplus.EnchantPlus;
 import com.darkblade12.enchantplus.Permission;
-import com.darkblade12.enchantplus.settings.Settings;
 import com.darkblade12.enchantplus.enchantment.EnchantmentInformation;
 import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
 import com.darkblade12.enchantplus.enchantment.enchanter.Enchanter;
 import com.darkblade12.enchantplus.plugin.command.CommandBase;
+import com.darkblade12.enchantplus.settings.Settings;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -16,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public final class AddCommand extends CommandBase<EnchantPlus> {
     private static final Pattern NUMBER_PATTERN = Pattern.compile("\\d+");
@@ -118,7 +117,7 @@ public final class AddCommand extends CommandBase<EnchantPlus> {
     public List<String> getSuggestions(EnchantPlus plugin, CommandSender sender, String[] args) {
         switch (args.length) {
             case 1:
-                return Arrays.stream(Enchantment.values()).map(e -> e.getKey().getKey()).collect(Collectors.toList());
+                return EnchantmentInformation.getNames();
             case 2:
                 return Arrays.asList("natural", "1", "2", "3", "4", "5");
             default:
