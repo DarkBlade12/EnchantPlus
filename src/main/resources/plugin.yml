@@ -1,7 +1,8 @@
-name: EnchantPlus
+name: ${project.name}
 version: ${project.version}
+description: ${project.description}
 author: DarkBlade12
-website: http://dev.bukkit.org/profiles/DarkBladee12
+website: ${project.url}
 api-version: 1.13
 
 main: com.darkblade12.enchantplus.EnchantPlus
