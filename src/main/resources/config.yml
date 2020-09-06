@@ -38,7 +38,7 @@ Enchantment_Names:
 Natural_Enchanting:
 
  # This section contains settings for the level limit of enchantments
- # Bypass permission: "EnchantPlus.bypass.limit"
+ # Bypass permission: "enchantplus.bypass.limit"
  Level_Limit:
    
   # Determines whether the level limit is enabled
@@ -62,11 +62,11 @@ Natural_Enchanting:
   Enabled: true
   
   # Determines whether the permission for this feature is enabled
-  # Permission: "EnchantPlus.mechanic.multiple"
+  # Permission: "enchantplus.enchanting.multiple"
   Permission_Enabled: false
   
   # Determines whether the conflicting check for enchantments is enabled (conflicting enchantment example: "Sharpness" and "Smite" or "Bane of Arthropods)
-  # Bypass permission: "EnchantPlus.bypass.conflicting"
+  # Bypass permission: "enchantplus.bypass.conflicting"
   Conflicting_Enabled: false
  
   # This section contains settings for stacking of enchantment levels
@@ -100,19 +100,19 @@ Manual_Enchanting:
  Enabled: true
  
  # Determines whether the conflicting check for enchantments is enabled (conflicting enchantment example: "Sharpness" and "Smite" or "Bane of Arthropods)
- # Bypass permission: "EnchantPlus.bypass.conflicting"
+ # Bypass permission: "enchantplus.bypass.conflicting"
  Conflicting_Enabled: false
  
  # Determines whether the inapplicable check for enchantments is enabled (inapplicable enchantment example: "Sharpness" on a pickaxe)
- # Bypass permission: "EnchantPlus.bypass.inapplicable"
+ # Bypass permission: "enchantplus.bypass.inapplicable"
  Inapplicable_Enabled: false
  
  # Determines whether the item amount check is enabled (items with a higher amount than 1 will trigger this check)
- # Bypass permission: "EnchantPlus.bypass.amount"
+ # Bypass permission: "enchantplus.bypass.amount"
  Amount_Enabled: true
  
  # This section contains settings for the condition to have a power source (enchantment table) to enchant something with commands
- # Bypass permission: "EnchantPlus.bypass.power"
+ # Bypass permission: "enchantplus.bypass.power"
  Power_Source:
   
   # Determines whether the power source is enabled
@@ -122,7 +122,7 @@ Manual_Enchanting:
   Range: 5
   
  # This section contains settings for the level restriction of the "/ep enchant command"
- # Bypass permission: "EnchantPlus.bypass.restriction"
+ # Bypass permission: "enchantplus.bypass.restriction"
  Level_Restriction:
   
   # Determines whether the level restriction is enabled
@@ -140,7 +140,7 @@ Manual_Enchanting:
    - looting-8
  
  # This section contains settings for the level cost of enchanting commands
- # Bypass permission: "EnchantPlus.bypass.cost"
+ # Bypass permission: "enchantplus.bypass.cost"
  # Formula: "<base> + <regular> * (<level> - 1)"
  Level_Cost:
   

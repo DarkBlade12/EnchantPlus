@@ -1,100 +1,76 @@
 package com.darkblade12.enchantplus;
 
-import com.darkblade12.enchantplus.command.CommandHandler;
-import com.darkblade12.enchantplus.command.types.AddCommand;
-import com.darkblade12.enchantplus.command.types.ApplicableCommand;
-import com.darkblade12.enchantplus.command.types.DescriptionCommand;
-import com.darkblade12.enchantplus.command.types.ListCommand;
-import com.darkblade12.enchantplus.command.types.MightyCommand;
-import com.darkblade12.enchantplus.command.types.PurifyCommand;
-import com.darkblade12.enchantplus.command.types.ReloadCommand;
-import com.darkblade12.enchantplus.command.types.RemoveCommand;
-import com.darkblade12.enchantplus.manager.EnchantingManager;
-import org.bstats.bukkit.Metrics;
+import com.darkblade12.enchantplus.command.PlusCommandHandler;
+import com.darkblade12.enchantplus.enchantment.EnchantingManager;
+import com.darkblade12.enchantplus.plugin.PluginBase;
+import com.darkblade12.enchantplus.plugin.command.CommandRegistrationException;
+import com.darkblade12.enchantplus.plugin.settings.InvalidValueException;
+import com.darkblade12.enchantplus.settings.Settings;
 
-public final class EnchantPlus extends AbstractPlugin {
+import java.util.Locale;
+
+public final class EnchantPlus extends PluginBase {
     private final Settings settings;
-    private final CommandHandler<EnchantPlus> commandHandler;
+    private final PlusCommandHandler commandHandler;
     private final EnchantingManager enchantingManager;
 
     public EnchantPlus() {
+        super(48784, 5366, "§8§l[§b§oEnchant§7§oPlus§8§l]§r");
         settings = new Settings(this);
-        commandHandler = new CommandHandler<>(this, "plus", 6, new AddCommand(), new MightyCommand(), new RemoveCommand(), new PurifyCommand(), new ListCommand(), new DescriptionCommand(), new ApplicableCommand(), new ReloadCommand());
+        commandHandler = new PlusCommandHandler(this);
         enchantingManager = new EnchantingManager(this);
     }
 
     @Override
-    public void onEnable() {
-        long time = System.currentTimeMillis();
+    public boolean load() {
         try {
-            settings.onLoad();
-        } catch (Exception exception) {
-            logger.warning("An error occurred while loading the settings from config.yml, plugin will disable! Cause: " + exception.getMessage());
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        try {
-            commandHandler.register();
-        } catch (Exception exception) {
-            logger.warning("An error occurred while registering the command handler, plugin will disable! Cause: " + exception.getMessage());
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        try {
-            enchantingManager.onEnable();
-        } catch (Exception exception) {
-            logger.warning("An error occurred while enabling the enchanting manager, plugin will disable! Cause: " + exception.getMessage());
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        try {
-            Metrics metrics = new Metrics(this, 5366);
-            if (!metrics.isEnabled()) {
-                logger.warning("Metrics is disabled!");
-            } else {
-                logger.info("This plugin is using Metrics by BtoBastian!");
-            }
-        } catch (Exception exception) {
-            logger.info("An error occurred while enabling Metrics!");
-        }
-        logger.info("Plugin version " + getDescription().getVersion() + " activated! (" + (System.currentTimeMillis() - time) + " ms)");
-    }
-
-    @Override
-    public void onDisable() {
-        enchantingManager.onDisable();
-        logger.info("Plugin deactivated!");
-    }
-
-    @Override
-    public boolean onReload() {
-        try {
-            settings.onReload();
-        } catch (Exception exception) {
-            logger.warning("An error occurred while reloading the settings form config.yml, plugin will disable! Cause: " + exception.getMessage());
-            getServer().getPluginManager().disablePlugin(this);
+            settings.load();
+        } catch (Exception e) {
+            logException(e, "Failed to load settings from the configuration file!");
             return false;
         }
+
         try {
-            enchantingManager.onReload();
-        } catch (Exception exception) {
-            logger.warning("An error occurred while reloading the enchanting manager, plugin will disable! Cause: " + exception.getMessage());
-            getServer().getPluginManager().disablePlugin(this);
+            commandHandler.enable();
+        } catch (CommandRegistrationException e) {
+            logException(e, "Failed to register commands!");
             return false;
         }
+
+        try {
+            enchantingManager.enable();
+        } catch (Exception e) {
+            logException(e, "Failed to enable the enchanting manager!");
+            return false;
+        }
+
         return true;
     }
 
     @Override
-    public String getPrefix() {
-        return "§8§l[§b§oEnchant§7§oPlus§8§l]§r";
+    public void unload() {
+        enchantingManager.disable();
+    }
+
+    @Override
+    public boolean reload() {
+        try {
+            settings.reload();
+        } catch (Exception e) {
+            logException(e, "Failed to load settings from the configuration file!");
+            return false;
+        }
+
+        enchantingManager.reload();
+        return true;
+    }
+
+    @Override
+    public Locale getCurrentLocale() {
+        return Locale.ENGLISH;
     }
 
     public Settings getSettings() {
         return settings;
-    }
-
-    public CommandHandler<EnchantPlus> getCommandHandler() {
-        return commandHandler;
     }
 }

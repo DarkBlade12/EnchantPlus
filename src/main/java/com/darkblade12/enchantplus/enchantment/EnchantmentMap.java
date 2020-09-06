@@ -1,6 +1,6 @@
 package com.darkblade12.enchantplus.enchantment;
 
-import com.darkblade12.enchantplus.Settings;
+import com.darkblade12.enchantplus.settings.Settings;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -36,11 +36,7 @@ public final class EnchantmentMap implements Iterable<Map.Entry<Enchantment, Int
         return !fromItemStack(item).isEmpty();
     }
 
-    public static boolean contains(ItemStack item, Enchantment enchant, int level) {
-        return fromItemStack(item).contains(enchant, level);
-    }
-
-    public static boolean contains(ItemStack item, Enchantment enchant) {
+    public static boolean hasEnchantment(ItemStack item, Enchantment enchant) {
         return fromItemStack(item).contains(enchant);
     }
 

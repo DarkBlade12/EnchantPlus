@@ -1,10 +1,10 @@
-package com.darkblade12.enchantplus.manager;
+package com.darkblade12.enchantplus.enchantment;
 
 import com.darkblade12.enchantplus.EnchantPlus;
-import com.darkblade12.enchantplus.Settings;
-import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
+import com.darkblade12.enchantplus.Permission;
+import com.darkblade12.enchantplus.settings.Settings;
 import com.darkblade12.enchantplus.enchantment.enchanter.Enchanter;
-import com.darkblade12.enchantplus.permission.Permission;
+import com.darkblade12.enchantplus.plugin.Manager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -36,19 +36,19 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
     }
 
     @Override
-    public void onEnable() throws Exception {
-        registerEvents();
+    protected void onEnable() {
     }
 
     @Override
-    public void onDisable() {
-        unregisterAll();
+    protected void onDisable() {
     }
+
 
     private int getEnchantingLevel(int slot, int bonus) {
         if (bonus > 15) {
             bonus = 15;
         }
+
         int base = RANDOM.nextInt(8) + 1 + (bonus >> 1) + RANDOM.nextInt(bonus + 1);
         switch (slot) {
             case 1:
@@ -64,14 +64,20 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
         List<Enchantment> remaining = new ArrayList<>();
         EnchantmentMap map = EnchantmentMap.fromItemStack(item);
         Settings settings = plugin.getSettings();
+
         for (Enchantment enchantment : EnchantmentMap.getApplicableEnchantments(item)) {
-            if (!map.contains(enchantment) || map.getLevel(enchantment) < settings.getLevelLimitAmount(player, enchantment)) {
-                if (settings.isMultipleEnchantingConflictingEnabled() || Permission.CONFLICTING_BYPASS.has(player) || !map
-                        .isConflicting(enchantment)) {
-                    remaining.add(enchantment);
-                }
+            if (map.contains(enchantment) && map.getLevel(enchantment) >= settings.getLevelLimitAmount(player, enchantment)) {
+                continue;
             }
+
+            if (!settings.isMultipleEnchantingConflictingEnabled() && !Permission.BYPASS_CONFLICTING.test(player) && map
+                    .isConflicting(enchantment)) {
+                continue;
+            }
+
+            remaining.add(enchantment);
         }
+
         return remaining;
     }
 
@@ -80,15 +86,17 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
         Player player = event.getEnchanter();
         Settings settings = plugin.getSettings();
         ItemStack item = event.getItem();
-        boolean permission = !settings.isMultipleEnchantingPermissionEnabled() || Permission.MULTIPLE_MECHANIC.has(player);
+        boolean permission = !settings.isMultipleEnchantingPermissionEnabled() || Permission.MULTIPLE_ENCHANTING.test(player);
         if (!settings.isMultipleEnchantingEnabled() || !permission || !EnchantmentMap.isEnchantable(item) ||
             !EnchantmentMap.hasEnchantments(item)) {
             return;
         }
+
         List<Enchantment> remaining = getRemainingEnchantments(player, item);
         if (remaining.isEmpty()) {
             return;
         }
+
         event.setCancelled(false);
         EnchantmentOffer[] offers = event.getOffers();
         int bonus = event.getEnchantmentBonus();
@@ -96,10 +104,12 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
         if (offerCount > 3) {
             offerCount = 3;
         }
+
         int[] costs = new int[offerCount];
         for (int index = 0; index < offerCount; index++) {
             costs[index] = getEnchantingLevel(index, bonus);
         }
+
         EnchantmentMap map = EnchantmentMap.fromItemStack(item);
         if (settings.isLevelCostIncreaseEnabled() && !map.isEmpty()) {
             int costIncrease = map.size() * settings.getLevelCostIncreaseAmount();
@@ -107,6 +117,7 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
                 costs[index] += costIncrease;
             }
         }
+
         for (int index = 0; index < offerCount; index++) {
             offers[index] = new EnchantmentOffer(remaining.get(index), 1, costs[index]);
         }
@@ -126,35 +137,42 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
                 Enchantment enchantment = entry.getKey();
                 int limit = settings.getLevelLimitAmount(player, enchantment);
                 if (entry.getValue() > limit) {
-                    additions.put(enchantment, limit);
+                    entry.setValue(limit);
                 }
             }
             return;
         }
+
         event.setCancelled(true);
         if (player.getGameMode() != GameMode.CREATIVE) {
             player.setLevel(player.getLevel() - event.getExpLevelCost());
         }
+
         List<Enchantment> remaining = getRemainingEnchantments(player, item);
         Collections.shuffle(remaining);
-        int size = remaining.size();
-        for (int index = 0; index < Math.min(size, 3); index++) {
-            Enchantment enchantment = remaining.get(index);
-            int level = index == 0 ? 1 : 0;
-            int limit = settings.getLevelLimitAmount(player, enchantment);
+        int maxOffers = Math.min(remaining.size(), 3);
+        for (int i = 0; i < maxOffers; i++) {
+            Enchantment enchant = remaining.get(i);
+            int level = i == 0 ? 1 : 0;
+            int limit = settings.getLevelLimitAmount(player, enchant);
             while (RANDOM.nextDouble() < (level >= 2 ? 0.3 : 0.5) && level < limit) {
                 level++;
             }
+
             if (level > 0) {
-                map.put(enchantment, level, player, settings);
+                map.put(enchant, level, player, settings);
             }
         }
+
         Enchanter.forItemStack(item).addEnchantments(map);
         if (player.getGameMode() != GameMode.CREATIVE) {
             EnchantingInventory inv = (EnchantingInventory) event.getInventory();
             ItemStack lapis = inv.getSecondary();
-            lapis.setAmount(lapis.getAmount() - (event.whichButton() + 1));
+            if (lapis != null) {
+                lapis.setAmount(lapis.getAmount() - (event.whichButton() + 1));
+            }
         }
+
         event.getInventory().setItem(0, item);
     }
 
@@ -164,26 +182,36 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
         if (inventory.getType() != InventoryType.ANVIL) {
             return;
         }
+
         ItemStack cursor = event.getCursor();
-        if (cursor.getType() == Material.AIR) {
+        if (cursor == null || cursor.getType() == Material.AIR) {
             return;
         }
+
         int slot = event.getRawSlot();
         if (slot < 0 || slot > 1 || slot == 0 && inventory.getItem(1) == null || slot == 1 && inventory.getItem(0) == null) {
             return;
         }
-        final EnchantmentMap map = EnchantmentMap.fromItemStack(slot == 0 ? inventory.getItem(1) : cursor);
+
+        ItemStack source = slot == 0 ? inventory.getItem(1) : cursor;
+        if (source == null) {
+            return;
+        }
+
+        final EnchantmentMap map = EnchantmentMap.fromItemStack(source);
         if (map.isEmpty()) {
             return;
         }
+
         new BukkitRunnable() {
             @Override
             public void run() {
-                ItemStack item = inventory.getItem(2);
-                if (item == null) {
+                ItemStack target = inventory.getItem(2);
+                if (target == null) {
                     return;
                 }
-                Enchanter enchanter = Enchanter.forItemStack(item);
+
+                Enchanter enchanter = Enchanter.forItemStack(target);
                 for (Entry<Enchantment, Integer> entry : map) {
                     Enchantment enchantment = entry.getKey();
                     int level = entry.getValue();
