@@ -5,6 +5,38 @@
     <groupId>com.darkblade12</groupId>
     <artifactId>EnchantPlus</artifactId>
     <version>1.3.4</version>
+    <name>EnchantPlus</name>
+    <description>EnchantPlus provides many features revolved around enchanting items</description>
+    <url>https://dev.bukkit.org/projects/enchantplus</url>
+
+    <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Spigot -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- bStats-Metrics -->
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>1.7</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <resources>
@@ -14,6 +46,7 @@
             </resource>
         </resources>
         <plugins>
+            <!-- Compile java classes -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
@@ -22,6 +55,7 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <!-- Shade the Metrics class -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -46,30 +80,7 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>codemc-repo</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
-        </repository>
-    </repositories>
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.16.1-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>1.7</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
