@@ -10,7 +10,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +35,7 @@ public final class ApplicableCommand extends CommandBase<EnchantPlus> {
             return;
         }
 
-        String list = plugin.getSettings().getEnchantmentList(Arrays.asList(Enchantment.values()), "command.plus.applicable.line");
+        String list = plugin.getSettings().getEnchantmentList(applicable, "command.plus.applicable.line");
         plugin.sendMessage(sender, "command.plus.applicable.message", list);
     }
 }
