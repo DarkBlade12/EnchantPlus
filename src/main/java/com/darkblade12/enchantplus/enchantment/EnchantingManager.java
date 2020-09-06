@@ -43,7 +43,7 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
     protected void onDisable() {
     }
 
-    private int getEnchantingLevel(int slot, int bonus) {
+    private static int getLevelCost(int slot, int bonus) {
         if (bonus > 15) {
             bonus = 15;
         }
@@ -99,14 +99,11 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
         event.setCancelled(false);
         EnchantmentOffer[] offers = event.getOffers();
         int bonus = event.getEnchantmentBonus();
-        int offerCount = remaining.size();
-        if (offerCount > 3) {
-            offerCount = 3;
-        }
+        int offerCount = Math.min(remaining.size(), 3);
 
         int[] costs = new int[offerCount];
         for (int index = 0; index < offerCount; index++) {
-            costs[index] = getEnchantingLevel(index, bonus);
+            costs[index] = getLevelCost(index, bonus);
         }
 
         EnchantmentMap map = EnchantmentMap.fromItemStack(item);

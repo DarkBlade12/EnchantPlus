@@ -86,7 +86,7 @@ public final class EnchantmentMap implements Iterable<Map.Entry<Enchantment, Int
     }
 
     public boolean isConflicting(Enchantment enchant) {
-        return enchantments.keySet().stream().anyMatch(e -> e.conflictsWith(enchant));
+        return enchantments.keySet().stream().anyMatch(e -> !e.equals(enchant) && e.conflictsWith(enchant));
     }
 
     public boolean contains(Enchantment enchant) {
