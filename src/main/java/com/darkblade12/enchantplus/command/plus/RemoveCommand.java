@@ -2,20 +2,18 @@ package com.darkblade12.enchantplus.command.plus;
 
 import com.darkblade12.enchantplus.EnchantPlus;
 import com.darkblade12.enchantplus.Permission;
-import com.darkblade12.enchantplus.settings.Settings;
 import com.darkblade12.enchantplus.enchantment.EnchantmentInformation;
 import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
 import com.darkblade12.enchantplus.enchantment.enchanter.Enchanter;
 import com.darkblade12.enchantplus.plugin.command.CommandBase;
+import com.darkblade12.enchantplus.settings.Settings;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class RemoveCommand extends CommandBase<EnchantPlus> {
     public RemoveCommand() {
@@ -62,6 +60,6 @@ public final class RemoveCommand extends CommandBase<EnchantPlus> {
 
     @Override
     public List<String> getSuggestions(EnchantPlus plugin, CommandSender sender, String[] args) {
-        return args.length == 1 ? Arrays.stream(Enchantment.values()).map(e -> e.getKey().getKey()).collect(Collectors.toList()) : null;
+        return args.length == 1 ? EnchantmentInformation.getNames() : null;
     }
 }
