@@ -1,82 +1,75 @@
 package com.darkblade12.enchantplus.enchantment.enchanter;
 
 import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
-import com.darkblade12.enchantplus.enchantment.enchanter.types.BookEnchanter;
-import com.darkblade12.enchantplus.enchantment.enchanter.types.NormalEnchanter;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 public abstract class Enchanter {
     protected final ItemStack item;
-    protected EnchantmentMap enchantments;
+    protected final EnchantmentMap enchantments;
 
-    public Enchanter(ItemStack item) {
+    protected Enchanter(ItemStack item) {
         this.item = item;
         enchantments = EnchantmentMap.fromItemStack(item);
     }
 
     public static Enchanter forItemStack(ItemStack item) {
-        Material material = item.getType();
-        return material == Material.BOOK || material == Material.ENCHANTED_BOOK ? new BookEnchanter(item) : new NormalEnchanter(item);
-    }
-
-    protected abstract void addItemEnchantment(Enchantment enchantment, int level);
-
-    public final void addEnchantment(Enchantment enchantment, int level) {
-        enchantments.put(enchantment, level);
-        addItemEnchantment(enchantment, enchantments.get(enchantment));
-    }
-
-    public final void addEnchantments(Map<Enchantment, Integer> map) {
-        for (Entry<Enchantment, Integer> entry : map.entrySet()) {
-            addEnchantment(entry.getKey(), entry.getValue());
+        switch (item.getType()) {
+            case BOOK:
+            case ENCHANTED_BOOK:
+                return new BookEnchanter(item);
+            default:
+                return new CommonEnchanter(item);
         }
     }
 
-    public final void addAllEnchantments(Collection<Enchantment> collection, int level) {
-        for (Enchantment enchantment : collection) {
-            addEnchantment(enchantment, level == 0 ? enchantment.getMaxLevel() : level);
+    protected abstract void addItemEnchantment(Enchantment enchant, int level);
+
+    public final void addEnchantment(Enchantment enchant, int level) {
+        enchantments.put(enchant, level);
+        addItemEnchantment(enchant, enchantments.getLevel(enchant));
+    }
+
+    public final void addEnchantments(Iterable<Map.Entry<Enchantment, Integer>> enchantments) {
+        enchantments.forEach(e -> addEnchantment(e.getKey(), e.getValue()));
+    }
+
+    public final void addAllEnchantments(Collection<Enchantment> enchantments, int level) {
+        for (Enchantment enchant : enchantments) {
+            addEnchantment(enchant, level == 0 ? enchant.getMaxLevel() : level);
         }
     }
 
-    public final void addAllEnchantments(Collection<Enchantment> collection) {
-        addAllEnchantments(collection, 0);
+    public final void addAllEnchantments(Collection<Enchantment> enchantments) {
+        addAllEnchantments(enchantments, 0);
     }
 
-    protected abstract void removeItemEnchantment(Enchantment enchantment);
+    protected abstract void removeItemEnchantment(Enchantment enchant);
 
-    public final void removeEnchantment(Enchantment enchantment) {
-        enchantments.remove(enchantment);
-        removeItemEnchantment(enchantment);
+    public final void removeEnchantment(Enchantment enchant) {
+        enchantments.remove(enchant);
+        removeItemEnchantment(enchant);
     }
 
-    public final void removeEnchantments(Collection<Enchantment> collection) {
-        for (Enchantment enchantment : collection) {
-            removeEnchantment(enchantment);
+    public final void clearEnchantments() {
+        Iterator<Map.Entry<Enchantment, Integer>> iterator = enchantments.iterator();
+        while (iterator.hasNext()) {
+            removeItemEnchantment(iterator.next().getKey());
+            iterator.remove();
         }
-    }
-
-    public final void removeEnchantments(Enchantment... enchantments) {
-        removeEnchantments(Arrays.asList(enchantments));
-    }
-
-    public final void removeAllEnchantments() {
-        removeEnchantments(enchantments.keySet());
     }
 
     public final ItemStack getItem() {
         return item;
     }
 
-    public final Map<Enchantment, Integer> getEnchantments() {
-        return Collections.unmodifiableMap(enchantments);
+    public final Set<Enchantment> getEnchantments() {
+        return enchantments.getEnchantments();
     }
 
     public final boolean hasEnchantments() {

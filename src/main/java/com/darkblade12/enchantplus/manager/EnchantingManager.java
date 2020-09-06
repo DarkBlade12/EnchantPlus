@@ -1,10 +1,9 @@
-package com.darkblade12.enchantplus.manager.types;
+package com.darkblade12.enchantplus.manager;
 
 import com.darkblade12.enchantplus.EnchantPlus;
 import com.darkblade12.enchantplus.Settings;
 import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
 import com.darkblade12.enchantplus.enchantment.enchanter.Enchanter;
-import com.darkblade12.enchantplus.manager.Manager;
 import com.darkblade12.enchantplus.permission.Permission;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -66,8 +65,9 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
         EnchantmentMap map = EnchantmentMap.fromItemStack(item);
         Settings settings = plugin.getSettings();
         for (Enchantment enchantment : EnchantmentMap.getApplicableEnchantments(item)) {
-            if (!map.containsKey(enchantment) || map.get(enchantment) < settings.getLevelLimitAmount(player, enchantment)) {
-                if (settings.isMultipleEnchantingConflictingEnabled() || Permission.CONFLICTING_BYPASS.has(player) || !map.conflictsWith(enchantment)) {
+            if (!map.contains(enchantment) || map.getLevel(enchantment) < settings.getLevelLimitAmount(player, enchantment)) {
+                if (settings.isMultipleEnchantingConflictingEnabled() || Permission.CONFLICTING_BYPASS.has(player) || !map
+                        .isConflicting(enchantment)) {
                     remaining.add(enchantment);
                 }
             }
@@ -81,7 +81,8 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
         Settings settings = plugin.getSettings();
         ItemStack item = event.getItem();
         boolean permission = !settings.isMultipleEnchantingPermissionEnabled() || Permission.MULTIPLE_MECHANIC.has(player);
-        if (!settings.isMultipleEnchantingEnabled() || !permission || !EnchantmentMap.isEnchantable(item) || !EnchantmentMap.hasEnchantments(item)) {
+        if (!settings.isMultipleEnchantingEnabled() || !permission || !EnchantmentMap.isEnchantable(item) ||
+            !EnchantmentMap.hasEnchantments(item)) {
             return;
         }
         List<Enchantment> remaining = getRemainingEnchantments(player, item);
@@ -183,7 +184,7 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
                     return;
                 }
                 Enchanter enchanter = Enchanter.forItemStack(item);
-                for (Entry<Enchantment, Integer> entry : map.entrySet()) {
+                for (Entry<Enchantment, Integer> entry : map) {
                     Enchantment enchantment = entry.getKey();
                     int level = entry.getValue();
                     if (level > enchantment.getMaxLevel()) {

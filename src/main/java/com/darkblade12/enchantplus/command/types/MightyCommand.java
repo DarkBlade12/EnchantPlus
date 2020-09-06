@@ -59,7 +59,7 @@ public final class MightyCommand extends AbstractCommand<EnchantPlus> {
             }
         }
         if (parameter.equalsIgnoreCase("natural")) {
-            enchanter.removeAllEnchantments();
+            enchanter.clearEnchantments();
             enchanter.addAllEnchantments(enchants);
             handler.displayPluginMessage(sender, "§aThe item in your hand is now mighty and has all" + (applicable ? " applicable" : "") + " enchantments at their natural level limit.");
             return;
@@ -79,7 +79,7 @@ public final class MightyCommand extends AbstractCommand<EnchantPlus> {
             handler.displayPluginMessage(sender, "§cThe level can't be lower than 1!");
             return;
         }
-        enchanter.removeAllEnchantments();
+        enchanter.clearEnchantments();
         enchanter.addAllEnchantments(enchants, level);
         handler.displayPluginMessage(sender, "§aThe item in your hand is now mighty and has all" + (applicable ? " applicable" : "") + " enchantments at level §6" + level + "§a.");
     }

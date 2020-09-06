@@ -4,7 +4,6 @@ import com.darkblade12.enchantplus.EnchantPlus;
 import com.darkblade12.enchantplus.Settings;
 import com.darkblade12.enchantplus.command.AbstractCommand;
 import com.darkblade12.enchantplus.command.CommandHandler;
-import com.darkblade12.enchantplus.enchantment.EnchantmentCalculator;
 import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
 import com.darkblade12.enchantplus.enchantment.enchanter.Enchanter;
 import com.darkblade12.enchantplus.permission.Permission;
@@ -37,11 +36,10 @@ public final class PurifyCommand extends AbstractCommand<EnchantPlus> {
             return;
         }
         Enchanter enchanter = Enchanter.forItemStack(item);
-        EnchantmentCalculator calculator = plugin.getCalculator();
-        for (Enchantment enchantment : enchanter.getEnchantments().keySet()) {
-            calculator.refund(player, item, enchantment);
+        for (Enchantment enchantment : enchanter.getEnchantments()) {
+            settings.refundLevels(player, item, enchantment);
         }
-        enchanter.removeAllEnchantments();
+        enchanter.clearEnchantments();
         handler.displayPluginMessage(sender, "§aAll enchantments were removed from the item in your hand.");
     }
 

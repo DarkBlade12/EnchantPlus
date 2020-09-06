@@ -26,7 +26,7 @@ public final class ApplicableCommand extends AbstractCommand<EnchantPlus> {
         EnchantmentMap map = EnchantmentMap.fromItemStack(item);
         List<Enchantment> applicable = new ArrayList<>();
         for (Enchantment enchantment : EnchantmentMap.getApplicableEnchantments(item)) {
-            if (!map.conflictsWith(enchantment)) {
+            if (!map.isConflicting(enchantment)) {
                 applicable.add(enchantment);
             }
         }

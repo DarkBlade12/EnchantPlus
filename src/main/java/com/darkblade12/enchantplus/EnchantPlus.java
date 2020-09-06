@@ -9,19 +9,16 @@ import com.darkblade12.enchantplus.command.types.MightyCommand;
 import com.darkblade12.enchantplus.command.types.PurifyCommand;
 import com.darkblade12.enchantplus.command.types.ReloadCommand;
 import com.darkblade12.enchantplus.command.types.RemoveCommand;
-import com.darkblade12.enchantplus.enchantment.EnchantmentCalculator;
-import com.darkblade12.enchantplus.manager.types.EnchantingManager;
+import com.darkblade12.enchantplus.manager.EnchantingManager;
 import org.bstats.bukkit.Metrics;
 
 public final class EnchantPlus extends AbstractPlugin {
     private final Settings settings;
-    private final EnchantmentCalculator calculator;
     private final CommandHandler<EnchantPlus> commandHandler;
     private final EnchantingManager enchantingManager;
 
     public EnchantPlus() {
         settings = new Settings(this);
-        calculator = new EnchantmentCalculator(settings);
         commandHandler = new CommandHandler<>(this, "plus", 6, new AddCommand(), new MightyCommand(), new RemoveCommand(), new PurifyCommand(), new ListCommand(), new DescriptionCommand(), new ApplicableCommand(), new ReloadCommand());
         enchantingManager = new EnchantingManager(this);
     }
@@ -97,15 +94,7 @@ public final class EnchantPlus extends AbstractPlugin {
         return settings;
     }
 
-    public EnchantmentCalculator getCalculator() {
-        return calculator;
-    }
-
     public CommandHandler<EnchantPlus> getCommandHandler() {
         return commandHandler;
-    }
-
-    public EnchantingManager getEnchantingManager() {
-        return enchantingManager;
     }
 }

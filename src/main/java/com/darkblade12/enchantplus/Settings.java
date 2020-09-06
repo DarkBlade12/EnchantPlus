@@ -1,6 +1,7 @@
 package com.darkblade12.enchantplus;
 
 import com.darkblade12.enchantplus.enchantment.EnchantmentInformation;
+import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
 import com.darkblade12.enchantplus.permission.Permission;
 import com.darkblade12.enchantplus.section.IndependentConfigurationSection;
 import com.darkblade12.enchantplus.section.exception.InvalidValueException;
@@ -9,6 +10,7 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,13 +22,19 @@ import java.util.regex.Pattern;
 
 public final class Settings {
     private static final IndependentConfigurationSection NATURAL_ENCHANTING = new IndependentConfigurationSection("Natural_Enchanting");
-    private static final IndependentConfigurationSection LEVEL_LIMIT = new IndependentConfigurationSection(NATURAL_ENCHANTING, "Level_Limit");
-    private static final IndependentConfigurationSection MULTIPLE_ENCHANTING = new IndependentConfigurationSection(NATURAL_ENCHANTING, "Multiple_Enchanting");
-    private static final IndependentConfigurationSection LEVEL_STACKING = new IndependentConfigurationSection(MULTIPLE_ENCHANTING, "Level_Stacking");
-    private static final IndependentConfigurationSection LEVEL_COST_INCREASE = new IndependentConfigurationSection(MULTIPLE_ENCHANTING, "Level_Cost_Increase");
+    private static final IndependentConfigurationSection LEVEL_LIMIT = new IndependentConfigurationSection(NATURAL_ENCHANTING,
+                                                                                                           "Level_Limit");
+    private static final IndependentConfigurationSection MULTIPLE_ENCHANTING = new IndependentConfigurationSection(NATURAL_ENCHANTING,
+                                                                                                                   "Multiple_Enchanting");
+    private static final IndependentConfigurationSection LEVEL_STACKING = new IndependentConfigurationSection(MULTIPLE_ENCHANTING,
+                                                                                                              "Level_Stacking");
+    private static final IndependentConfigurationSection LEVEL_COST_INCREASE = new IndependentConfigurationSection(MULTIPLE_ENCHANTING,
+                                                                                                                   "Level_Cost_Increase");
     private static final IndependentConfigurationSection MANUAL_ENCHANTING = new IndependentConfigurationSection("Manual_Enchanting");
-    private static final IndependentConfigurationSection POWER_SOURCE = new IndependentConfigurationSection(MANUAL_ENCHANTING, "Power_Source");
-    private static final IndependentConfigurationSection LEVEL_RESTRICTION = new IndependentConfigurationSection(MANUAL_ENCHANTING, "Level_Restriction");
+    private static final IndependentConfigurationSection POWER_SOURCE = new IndependentConfigurationSection(MANUAL_ENCHANTING,
+                                                                                                            "Power_Source");
+    private static final IndependentConfigurationSection LEVEL_RESTRICTION = new IndependentConfigurationSection(MANUAL_ENCHANTING,
+                                                                                                                 "Level_Restriction");
     private static final IndependentConfigurationSection LEVEL_COST = new IndependentConfigurationSection(MANUAL_ENCHANTING, "Level_Cost");
     private static final IndependentConfigurationSection LEVEL_REFUND = new IndependentConfigurationSection(LEVEL_COST, "Level_Refund");
     private static final Pattern ENCHANTMENT_NAME = Pattern.compile("[a-zA-Z_\\s]+-([a-zA-Z_\\s]+|\\d+)");
@@ -89,12 +97,14 @@ public final class Settings {
         int position = 1;
         for (String element : enchantmentNames) {
             if (!ENCHANTMENT_NAME.matcher(element).matches()) {
-                throw new InvalidValueException("Enchantment_Names", "contains an element with an invalid format (Position: " + position + ")");
+                throw new InvalidValueException("Enchantment_Names",
+                                                "contains an element with an invalid format (Position: " + position + ")");
             }
             String[] split = element.split("-");
             Enchantment enchantment = getEnchantment(split[1]);
             if (enchantment == null) {
-                throw new InvalidValueException("Enchantment_Names", "contains an element with an invalid enchantment identifier (Position: " + position + ")");
+                throw new InvalidValueException("Enchantment_Names",
+                                                "contains an element with an invalid enchantment identifier (Position: " + position + ")");
             }
             addEnchantment(split[0], enchantment);
             position++;
@@ -124,21 +134,25 @@ public final class Settings {
         int position = 1;
         for (String element : overrides) {
             if (!LEVEL_LIMIT_OVERRIDE.matcher(element).matches()) {
-                throw new InvalidValueException("Overrides", LEVEL_LIMIT, "contains an element with an invalid format (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_LIMIT,
+                                                "contains an element with an invalid format (Position: " + position + ")");
             }
             String[] split = element.split("-");
             Enchantment enchantment = getEnchantment(split[0]);
             if (enchantment == null) {
-                throw new InvalidValueException("Overrides", LEVEL_LIMIT, "contains an element with an invalid enchantment name (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_LIMIT,
+                                                "contains an element with an invalid enchantment name (Position: " + position + ")");
             }
             int amount;
             try {
                 amount = Integer.parseInt(split[1]);
             } catch (Exception exception) {
-                throw new InvalidValueException("Overrides", LEVEL_LIMIT, "contains an element with an invalid amount (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_LIMIT,
+                                                "contains an element with an invalid amount (Position: " + position + ")");
             }
             if (amount < 0) {
-                throw new InvalidValueException("Overrides", LEVEL_LIMIT, "contains an element with an amount lower than 0 (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_LIMIT,
+                                                "contains an element with an amount lower than 0 (Position: " + position + ")");
             }
             levelLimitOverrides.put(enchantment, amount);
             position++;
@@ -175,12 +189,14 @@ public final class Settings {
         int position = 1;
         for (String element : overrides) {
             if (!LEVEL_STACKING_OVERRIDE.matcher(element).matches()) {
-                throw new InvalidValueException("Overrides", LEVEL_STACKING, "contains an element with an invalid format (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_STACKING,
+                                                "contains an element with an invalid format (Position: " + position + ")");
             }
             String[] split = element.split("-");
             Enchantment enchantment = getEnchantment(split[0]);
             if (enchantment == null) {
-                throw new InvalidValueException("Overrides", LEVEL_STACKING, "contains an element with an invalid enchantment name (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_STACKING,
+                                                "contains an element with an invalid enchantment name (Position: " + position + ")");
             }
             levelStackingOverrides.put(enchantment, Boolean.parseBoolean(split[1]));
             position++;
@@ -251,21 +267,25 @@ public final class Settings {
         int position = 1;
         for (String element : overrides) {
             if (!LEVEL_RESTRICTION_OVERRIDE.matcher(element).matches()) {
-                throw new InvalidValueException("Overrides", LEVEL_RESTRICTION, "contains an element with an invalid format (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_RESTRICTION,
+                                                "contains an element with an invalid format (Position: " + position + ")");
             }
             String[] split = element.split("-");
             Enchantment enchantment = getEnchantment(split[0]);
             if (enchantment == null) {
-                throw new InvalidValueException("Overrides", LEVEL_RESTRICTION, "contains an element with an invalid enchantment name (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_RESTRICTION,
+                                                "contains an element with an invalid enchantment name (Position: " + position + ")");
             }
             int amount;
             try {
                 amount = Integer.parseInt(split[1]);
             } catch (Exception exception) {
-                throw new InvalidValueException("Overrides", LEVEL_RESTRICTION, "contains an element with an invalid amount (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_RESTRICTION,
+                                                "contains an element with an invalid amount (Position: " + position + ")");
             }
             if (amount < 0) {
-                throw new InvalidValueException("Overrides", LEVEL_RESTRICTION, "contains an element with an amount lower than 0 (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_RESTRICTION,
+                                                "contains an element with an amount lower than 0 (Position: " + position + ")");
             }
             levelRestrictionOverrides.put(enchantment, amount);
             position++;
@@ -294,12 +314,14 @@ public final class Settings {
         int position = 1;
         for (String element : overrides) {
             if (!LEVEL_COST_OVERRIDE.matcher(element).matches()) {
-                throw new InvalidValueException("Overrides", LEVEL_COST, "contains an element with an invalid format (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_COST,
+                                                "contains an element with an invalid format (Position: " + position + ")");
             }
             String[] split = element.split("-");
             Enchantment enchantment = getEnchantment(split[0]);
             if (enchantment == null) {
-                throw new InvalidValueException("Overrides", LEVEL_COST, "contains an element with an invalid enchantment name (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_COST,
+                                                "contains an element with an invalid enchantment name (Position: " + position + ")");
             }
             int[] amounts = new int[] { levelCostBaseAmount, levelCostRegularAmount };
             int length = split.length;
@@ -309,19 +331,23 @@ public final class Settings {
                     try {
                         amounts[0] = Integer.parseInt(part.replaceAll("[bB]", ""));
                     } catch (Exception exception) {
-                        throw new InvalidValueException("Overrides", LEVEL_COST, "contains an element with an invalid base amount (Position: " + position + ")");
+                        throw new InvalidValueException("Overrides", LEVEL_COST,
+                                                        "contains an element with an invalid base amount (Position: " + position + ")");
                     }
                     if (amounts[0] < 0) {
-                        throw new InvalidValueException("Overrides", LEVEL_COST, "contains an element with a base amount lower than 0 (Position: " + position + ")");
+                        throw new InvalidValueException("Overrides", LEVEL_COST,
+                                                        "contains an element with a base amount lower than 0 (Position: " + position + ")");
                     }
                 } else if (LEVEL_COST_REGULAR.matcher(part).matches()) {
                     try {
                         amounts[1] = Integer.parseInt(part.replaceAll("[rR]", ""));
                     } catch (Exception exception) {
-                        throw new InvalidValueException("Overrides", LEVEL_COST, "contains an element with an invalid regular amount (Position: " + position + ")");
+                        throw new InvalidValueException("Overrides", LEVEL_COST,
+                                                        "contains an element with an invalid regular amount (Position: " + position + ")");
                     }
                     if (amounts[1] < 0) {
-                        throw new InvalidValueException("Overrides", LEVEL_COST, "contains an element with a regular amount lower than 0 (Position: " + position + ")");
+                        throw new InvalidValueException("Overrides", LEVEL_COST,
+                                                        "contains an element with a regular amount lower than 0 (Position: " + position + ")");
                     }
                 }
             }
@@ -349,21 +375,25 @@ public final class Settings {
         int position = 1;
         for (String element : overrides) {
             if (!LEVEL_REFUND_OVERRIDE.matcher(element).matches()) {
-                throw new InvalidValueException("Overrides", LEVEL_REFUND, "contains an element with an invalid format (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_REFUND,
+                                                "contains an element with an invalid format (Position: " + position + ")");
             }
             String[] split = element.split("-");
             Enchantment enchantment = getEnchantment(split[0]);
             if (enchantment == null) {
-                throw new InvalidValueException("Overrides", LEVEL_REFUND, "contains an element with an invalid enchantment name (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_REFUND,
+                                                "contains an element with an invalid enchantment name (Position: " + position + ")");
             }
             int amount;
             try {
                 amount = Integer.parseInt(split[1]);
             } catch (Exception exception) {
-                throw new InvalidValueException("Overrides", LEVEL_REFUND, "contains an element with an invalid amount (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_REFUND,
+                                                "contains an element with an invalid amount (Position: " + position + ")");
             }
             if (amount < 0) {
-                throw new InvalidValueException("Overrides", LEVEL_REFUND, "contains an element with an amount lower than 0 (Position: " + position + ")");
+                throw new InvalidValueException("Overrides", LEVEL_REFUND,
+                                                "contains an element with an amount lower than 0 (Position: " + position + ")");
             }
             levelRefundOverrides.put(enchantment, amount);
             position++;
@@ -414,21 +444,17 @@ public final class Settings {
         return names;
     }
 
-    public boolean isLevelLimitEnabled() {
-        return levelLimitEnabled;
+    public int getLevelLimitAmount(Enchantment enchant) {
+        if (!levelLimitEnabled) {
+            return Short.MAX_VALUE;
+        }
+
+        int levelLimit = levelLimitOverrides.getOrDefault(enchant, levelLimitAmount);
+        return levelLimit == 0 ? enchant.getMaxLevel() : levelLimit;
     }
 
-    public int getLevelLimitAmount() {
-        return levelLimitAmount;
-    }
-
-    public int getLevelLimitAmount(Enchantment enchantment) {
-        int amount = levelLimitEnabled ? (levelLimitOverrides.containsKey(enchantment) ? levelLimitOverrides.get(enchantment) : levelLimitAmount) : Short.MAX_VALUE;
-        return amount == 0 ? enchantment.getMaxLevel() : amount;
-    }
-
-    public int getLevelLimitAmount(Player player, Enchantment enchantment) {
-        return Permission.LIMIT_BYPASS.has(player) ? Short.MAX_VALUE : getLevelLimitAmount(enchantment);
+    public int getLevelLimitAmount(Player player, Enchantment enchant) {
+        return Permission.LIMIT_BYPASS.has(player) ? Short.MAX_VALUE : getLevelLimitAmount(enchant);
     }
 
     public boolean isMultipleEnchantingEnabled() {
@@ -443,12 +469,8 @@ public final class Settings {
         return multipleEnchantingConflictingEnabled;
     }
 
-    public boolean isLevelStackingEnabled() {
-        return levelStackingEnabled;
-    }
-
-    public boolean isLevelStackingEnabled(Enchantment enchantment) {
-        return levelStackingOverrides.containsKey(enchantment) ? levelStackingOverrides.get(enchantment) : levelStackingEnabled;
+    public boolean isLevelStackingEnabled(Enchantment enchant) {
+        return levelStackingOverrides.containsKey(enchant) ? levelStackingOverrides.get(enchant) : levelStackingEnabled;
     }
 
     public boolean isLevelCostIncreaseEnabled() {
@@ -483,60 +505,74 @@ public final class Settings {
         return powerSourceRange;
     }
 
-    public boolean isLevelRestrictionEnabled() {
-        return levelRestrictionEnabled;
+    public int getLevelRestrictionAmount(Enchantment enchant) {
+        if (!levelRestrictionEnabled) {
+            return Short.MAX_VALUE;
+        }
+
+        int levelRestriction = levelRestrictionOverrides.getOrDefault(enchant, levelRestrictionAmount);
+        return levelRestriction == 0 ? enchant.getMaxLevel() : levelRestriction;
     }
 
-    public int getLevelRestrictionAmount() {
-        return levelRestrictionAmount;
+    public int getLevelRestrictionAmount(Player player, Enchantment enchant) {
+        return Permission.RESTRICTION_BYPASS.has(player) ? Short.MAX_VALUE : getLevelRestrictionAmount(enchant);
     }
 
-    public int getLevelRestrictionAmount(Enchantment enchantment) {
-        int amount = levelRestrictionEnabled ? (levelRestrictionOverrides.containsKey(enchantment) ? levelRestrictionOverrides.get(enchantment) : levelRestrictionAmount) : Short.MAX_VALUE;
-        return amount == 0 ? enchantment.getMaxLevel() : amount;
-    }
+    public int[] getLevelCostAmounts(Enchantment enchant) {
+        if (!levelCostEnabled) {
+            return new int[2];
+        }
 
-    public int getLevelRestrictionAmount(Player player, Enchantment enchantment) {
-        return Permission.RESTRICTION_BYPASS.has(player) ? Short.MAX_VALUE : getLevelRestrictionAmount(enchantment);
-    }
-
-    public boolean isLevelCostEnabled() {
-        return levelCostEnabled;
-    }
-
-    public int getLevelCostBaseAmount() {
-        return levelCostBaseAmount;
-    }
-
-    public int getLevelCostRegularAmount() {
-        return levelCostRegularAmount;
-    }
-
-    public int[] getLevelCostAmounts(Enchantment enchantment) {
-        return levelCostEnabled ? (levelCostOverrides.containsKey(enchantment) ? levelCostOverrides.get(enchantment) : new int[] { levelCostBaseAmount, levelCostRegularAmount }) : new int[2];
+        return levelCostOverrides.containsKey(enchant)
+               ? levelCostOverrides.get(enchant)
+               : new int[] { levelCostBaseAmount, levelCostRegularAmount };
     }
 
     public int[] getLevelCostAmounts(Player player, Enchantment enchantment) {
         return Permission.COST_BYPASS.has(player) ? new int[2] : getLevelCostAmounts(enchantment);
     }
 
-    public int getLevelCostBaseAmount(Enchantment enchantment) {
-        return getLevelCostAmounts(enchantment)[0];
+    private int getRawCost(Player player, Enchantment enchantment, int level) {
+        int[] costs = getLevelCostAmounts(player, enchantment);
+        return level == 0 ? 0 : costs[0] + costs[1] * (level - 1);
     }
 
-    public int getLevelCostRegularAmount(Enchantment enchantment) {
-        return getLevelCostAmounts(enchantment)[1];
-    }
+    public int getCost(Player player, ItemStack item, Enchantment enchant, int level) throws IllegalArgumentException {
+        EnchantmentMap map = EnchantmentMap.fromItemStack(item);
+        int currentLevel = map.getLevel(enchant, 0);
+        if (currentLevel == level) {
+            throw new IllegalArgumentException("Current level equals enchanting level");
+        }
 
-    public boolean isLevelRefundEnabled() {
-        return levelRefundEnabled;
-    }
+        if (currentLevel < level) {
+            return getRawCost(player, enchant, level) - getRawCost(player, enchant, currentLevel);
+        } else if (!levelRefundEnabled) {
+            return 0;
+        }
 
-    public int getLevelRefundAmount() {
-        return levelRefundAmount;
+        int refundAmount = getLevelRefundAmount(enchant);
+        return -(refundAmount == 0
+                 ? Math.abs(getRawCost(player, enchant, currentLevel) - getRawCost(player, enchant, level))
+                 : refundAmount * currentLevel);
     }
 
     public int getLevelRefundAmount(Enchantment enchantment) {
-        return levelRefundEnabled ? (levelRefundOverrides.containsKey(enchantment) ? levelRefundOverrides.get(enchantment) : levelRefundAmount) : 0;
+        return levelRefundEnabled ? (levelRefundOverrides.containsKey(enchantment)
+                                     ? levelRefundOverrides.get(enchantment)
+                                     : levelRefundAmount) : 0;
+    }
+
+    public boolean withdrawLevels(Player player, ItemStack item, Enchantment enchant, int level) {
+        int cost = getCost(player, item, enchant, level);
+        int playerLevel = player.getLevel();
+        if (playerLevel < cost) {
+            return false;
+        }
+        player.setLevel(playerLevel - cost);
+        return true;
+    }
+
+    public void refundLevels(Player player, ItemStack item, Enchantment enchant) {
+        withdrawLevels(player, item, enchant, 0);
     }
 }

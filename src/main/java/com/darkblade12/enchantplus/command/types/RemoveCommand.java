@@ -33,7 +33,7 @@ public final class RemoveCommand extends AbstractCommand<EnchantPlus> {
             handler.displayPluginMessage(sender, "§cAn enchantment with this identifier doesn't exist!");
             return;
         }
-        if (!EnchantmentMap.fromItemStack(item).containsKey(enchantment)) {
+        if (!EnchantmentMap.fromItemStack(item).contains(enchantment)) {
             handler.displayPluginMessage(sender, "§cThis enchantment isn't applied to the item in your hand!");
             return;
         }
@@ -41,7 +41,7 @@ public final class RemoveCommand extends AbstractCommand<EnchantPlus> {
             handler.displayPluginMessage(sender, "§cYou have to be near a power source (enchantment table) to be able to execute this command!");
             return;
         }
-        plugin.getCalculator().refund(player, item, enchantment);
+        settings.refundLevels(player, item, enchantment);
         Enchanter.forItemStack(item).removeEnchantment(enchantment);
         handler.displayPluginMessage(sender, "§aThe §6" + EnchantmentInformation.getMinecraftName(enchantment) + " §aenchantment was removed from the item in your hand.");
     }

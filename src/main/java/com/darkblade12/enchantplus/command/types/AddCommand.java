@@ -4,7 +4,6 @@ import com.darkblade12.enchantplus.EnchantPlus;
 import com.darkblade12.enchantplus.Settings;
 import com.darkblade12.enchantplus.command.AbstractCommand;
 import com.darkblade12.enchantplus.command.CommandHandler;
-import com.darkblade12.enchantplus.enchantment.EnchantmentCalculator;
 import com.darkblade12.enchantplus.enchantment.EnchantmentInformation;
 import com.darkblade12.enchantplus.enchantment.EnchantmentMap;
 import com.darkblade12.enchantplus.enchantment.enchanter.Enchanter;
@@ -49,7 +48,7 @@ public final class AddCommand extends AbstractCommand<EnchantPlus> {
             return;
         }
         EnchantmentMap map = EnchantmentMap.fromItemStack(item);
-        if (settings.isManualEnchantingConflictingEnabled() && map.conflictsWith(enchantment) && !Permission.CONFLICTING_BYPASS.has(sender)) {
+        if (settings.isManualEnchantingConflictingEnabled() && map.isConflicting(enchantment) && !Permission.CONFLICTING_BYPASS.has(sender)) {
             handler.displayPluginMessage(sender, "§cThis enchantment conflicts with another enchantment on the item in your hand!");
             return;
         }
@@ -78,7 +77,7 @@ public final class AddCommand extends AbstractCommand<EnchantPlus> {
             handler.displayPluginMessage(sender, "§cThe level can't be higher than §6" + restriction + " §cfor this enchantment!");
             return;
         }
-        if (map.hasEnchantment(enchantment, level)) {
+        if (map.contains(enchantment, level)) {
             handler.displayPluginMessage(sender, "§cThis enchantment is already applied at this level to the item in your hand!");
             return;
         }
@@ -86,9 +85,9 @@ public final class AddCommand extends AbstractCommand<EnchantPlus> {
             handler.displayPluginMessage(sender, "§cYou have to be near a power source (enchantment table) to be able to execute this command!");
             return;
         }
-        EnchantmentCalculator calculator = plugin.getCalculator();
-        if (!calculator.transact(player, item, enchantment, level)) {
-            handler.displayPluginMessage(sender, "§cYou need to have §6" + calculator.getCost(player, item, enchantment, level) + " §cexp levels to add this enchantment at level §e" + level + " §cto the item in your hand!");
+
+        if (!settings.withdrawLevels(player, item, enchantment, level)) {
+            handler.displayPluginMessage(sender, "§cYou need to have §6" + settings.getCost(player, item, enchantment, level) + " §cexp levels to add this enchantment at level §e" + level + " §cto the item in your hand!");
             return;
         }
         Enchanter.forItemStack(item).addEnchantment(enchantment, level);

@@ -1,43 +1,47 @@
 package com.darkblade12.enchantplus.enchantment;
 
 import com.darkblade12.enchantplus.Settings;
-import com.darkblade12.enchantplus.enchantment.enchanter.Enchanter;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public final class EnchantmentMap extends HashMap<Enchantment, Integer> {
-    private static final long serialVersionUID = -1098212004496712186L;
+public final class EnchantmentMap implements Iterable<Map.Entry<Enchantment, Integer>> {
+    private final Map<Enchantment, Integer> enchantments;
 
-    public EnchantmentMap() {
-        super();
-    }
-
-    public EnchantmentMap(Map<Enchantment, Integer> map) {
-        super(map);
+    public EnchantmentMap(Map<Enchantment, Integer> enchantments) {
+        this.enchantments = new HashMap<>(enchantments);
     }
 
     public static EnchantmentMap fromItemStack(ItemStack item) {
-        return new EnchantmentMap(item.getType() == Material.ENCHANTED_BOOK ? ((EnchantmentStorageMeta) item.getItemMeta()).getStoredEnchants() : item.getEnchantments());
+        ItemMeta meta = item.getItemMeta();
+        if (meta instanceof EnchantmentStorageMeta) {
+            return new EnchantmentMap(((EnchantmentStorageMeta) meta).getStoredEnchants());
+        }
+
+        return new EnchantmentMap(item.getEnchantments());
     }
 
     public static boolean hasEnchantments(ItemStack item) {
         return !fromItemStack(item).isEmpty();
     }
 
-    public static boolean hasEnchantment(ItemStack item, Enchantment enchantment, int level) {
-        return fromItemStack(item).hasEnchantment(enchantment, level);
+    public static boolean contains(ItemStack item, Enchantment enchant, int level) {
+        return fromItemStack(item).contains(enchant, level);
     }
 
-    public static boolean hasEnchantment(ItemStack item, Enchantment enchantment) {
-        return fromItemStack(item).containsKey(enchantment);
+    public static boolean contains(ItemStack item, Enchantment enchant) {
+        return fromItemStack(item).contains(enchant);
     }
 
     public static boolean isEnchantmentApplicable(ItemStack item, Enchantment enchant) {
@@ -46,62 +50,71 @@ public final class EnchantmentMap extends HashMap<Enchantment, Integer> {
     }
 
     public static List<Enchantment> getApplicableEnchantments(ItemStack item) {
-        List<Enchantment> applicable = new ArrayList<>();
-        for (Enchantment enchant : Enchantment.values()) {
-            if (!enchant.isTreasure() && isEnchantmentApplicable(item, enchant)) {
-                applicable.add(enchant);
-            }
-        }
-        return applicable;
+        return Arrays.stream(Enchantment.values()).filter(e -> !e.isTreasure() && isEnchantmentApplicable(item, e))
+                     .collect(Collectors.toList());
     }
 
     public static boolean isEnchantable(ItemStack item) {
         return !getApplicableEnchantments(item).isEmpty();
     }
 
-    public Integer put(Enchantment key, Integer value, Player player, Settings settings) {
+    public void put(Enchantment enchant, int level) {
+        enchantments.put(enchant, level);
+    }
+
+    public void put(Enchantment enchant, int level, Player player, Settings settings) {
         if (settings != null) {
-            if (settings.isLevelStackingEnabled(key) && containsKey(key)) {
-                value += get(key);
+            if (settings.isLevelStackingEnabled(enchant) && enchantments.containsKey(enchant)) {
+                level += enchantments.get(enchant);
             }
-            int amount = settings.getLevelLimitAmount(player, key);
-            if (value > amount) {
-                value = amount;
-            }
-        }
-        return super.put(key, value);
-    }
 
-    public void putAll(Map<? extends Enchantment, ? extends Integer> map, Player player, Settings settings) {
-        for (Entry<? extends Enchantment, ? extends Integer> entry : map.entrySet()) {
-            put(entry.getKey(), entry.getValue(), player, settings);
-        }
-    }
-
-    public void addEnchantments(ItemStack item) {
-        Enchanter.forItemStack(item).addEnchantments(this);
-    }
-
-    public boolean conflictsWith(Enchantment enchantment) {
-        for (Enchantment itemEnchant : keySet()) {
-            if (itemEnchant != enchantment && enchantment.conflictsWith(itemEnchant)) {
-                return true;
+            int levelLimit = settings.getLevelLimitAmount(player, enchant);
+            if (level > levelLimit) {
+                level = levelLimit;
             }
         }
-        return false;
+
+        enchantments.put(enchant, level);
     }
 
-    public boolean hasEnchantment(Enchantment enchantment, int level) {
-        return containsKey(enchantment) && get(enchantment) == level;
+    public void remove(Enchantment enchant) {
+        enchantments.remove(enchant);
     }
 
-    public List<Enchantment> getConflicting(Enchantment enchantment) {
-        List<Enchantment> conflicting = new ArrayList<>();
-        for (Enchantment itemEnchant : keySet()) {
-            if (itemEnchant.conflictsWith(enchantment)) {
-                conflicting.add(itemEnchant);
-            }
-        }
-        return conflicting;
+    public int getLevel(Enchantment enchant) {
+        return enchantments.get(enchant);
+    }
+
+    public int getLevel(Enchantment enchant, int defaultValue) {
+        return enchantments.getOrDefault(enchant, defaultValue);
+    }
+
+    public Set<Enchantment> getEnchantments() {
+        return enchantments.keySet();
+    }
+
+    public boolean isConflicting(Enchantment enchant) {
+        return enchantments.keySet().stream().anyMatch(e -> e.conflictsWith(enchant));
+    }
+
+    public boolean contains(Enchantment enchant) {
+        return enchantments.containsKey(enchant);
+    }
+
+    public boolean contains(Enchantment enchant, int level) {
+        return enchantments.getOrDefault(enchant, 0) == level;
+    }
+
+    public int size() {
+        return enchantments.size();
+    }
+
+    public boolean isEmpty() {
+        return enchantments.isEmpty();
+    }
+
+    @Override
+    public Iterator<Map.Entry<Enchantment, Integer>> iterator() {
+        return enchantments.entrySet().iterator();
     }
 }
