@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class RemoveCommand extends CommandBase<EnchantPlus> {
     public RemoveCommand() {
@@ -44,7 +45,7 @@ public final class RemoveCommand extends CommandBase<EnchantPlus> {
         name = EnchantmentInformation.getMinecraftName(enchant);
 
         if (!EnchantmentMap.hasEnchantment(item, enchant)) {
-            plugin.sendMessage(sender, "command.plus.remove.notApplied");
+            plugin.sendMessage(sender, "command.plus.remove.notApplied", name);
             return;
         }
 
@@ -60,6 +61,16 @@ public final class RemoveCommand extends CommandBase<EnchantPlus> {
 
     @Override
     public List<String> getSuggestions(EnchantPlus plugin, CommandSender sender, String[] args) {
-        return args.length == 1 ? EnchantmentInformation.getNames() : null;
+        if (args.length != 1) {
+            return null;
+        }
+
+        ItemStack item = sender instanceof Player ? ((Player) sender).getInventory().getItemInMainHand() : null;
+        if (item == null || item.getType() == Material.AIR) {
+            return EnchantmentInformation.getNames();
+        }
+
+        return EnchantmentMap.fromItemStack(item).getEnchantments().stream().map(EnchantmentInformation::getName)
+                             .collect(Collectors.toList());
     }
 }
