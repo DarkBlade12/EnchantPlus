@@ -52,8 +52,15 @@ public final class AddCommand extends CommandBase<EnchantPlus> {
         }
         name = EnchantmentInformation.getMinecraftName(enchant);
 
-        if (settings.isManualEnchantingInapplicableEnabled() && !enchant.canEnchantItem(item) &&
-            !Permission.BYPASS_INAPPLICABLE.test(sender)) {
+        boolean applicable;
+        Material type = item.getType();
+        if (type == Material.BOOK || type == Material.ENCHANTED_BOOK) {
+            applicable = true;
+        } else {
+            applicable = enchant.canEnchantItem(item);
+        }
+
+        if (settings.isManualEnchantingInapplicableEnabled() && !applicable && !Permission.BYPASS_INAPPLICABLE.test(sender)) {
             plugin.sendMessage(sender, "command.plus.add.inapplicable", name);
             return;
         }
