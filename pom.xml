@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.darkblade12</groupId>
     <artifactId>EnchantPlus</artifactId>
-    <version>1.3.4</version>
+    <version>1.3.5</version>
     <name>EnchantPlus</name>
     <description>EnchantPlus provides many features revolved around enchanting items</description>
     <url>https://dev.bukkit.org/projects/enchantplus</url>
