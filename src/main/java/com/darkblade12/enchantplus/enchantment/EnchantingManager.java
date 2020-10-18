@@ -69,7 +69,7 @@ public final class EnchantingManager extends Manager<EnchantPlus> {
                 continue;
             }
 
-            if (!settings.isMultipleEnchantingConflictingEnabled() && !Permission.BYPASS_CONFLICTING.test(player) && map
+            if (settings.isMultipleEnchantingConflictingEnabled() && !Permission.BYPASS_CONFLICTING.test(player) && map
                     .isConflicting(enchant)) {
                 continue;
             }
